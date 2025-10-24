@@ -3,11 +3,9 @@ import { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { StreamChat } from 'stream-chat';
-import OpenAI from 'openai';
 import { db } from './config/database.js';
-import { charts, users } from './db/schema.js'
+import { chats, users } from './db/schema.js'
 import { eq } from 'drizzle-orm';
-import { ChatCompletionMessageParam } from 'openai/resources';
 
 dotenv.config();
 
@@ -22,10 +20,6 @@ const chatClient = StreamChat.getInstance(
   process.env.STREAM_API_SECRET!,
 );
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 app.post(
   '/register-user',
   async (req: Request, res: Response): Promise<any> => {
@@ -37,16 +31,15 @@ app.post(
 
     try {
       const userId = email.replace(/[^a-zA-Z0-9_-]/g, '_');
-
+      
       const userRespose = await chatClient.queryUsers({
         id: { $eq: userId }
       })
-
+      
       if (!userRespose.users.length) {
         await chatClient.upsertUser({
           id: userId,
           name,
-          email,
           role: 'user',
         })
       }
@@ -60,7 +53,7 @@ app.post(
 
       res.status(200).json({ userId, name, email });
     } catch (error) {
-      res.status(500).json({ error: '服务器内部错误' });
+      res.status(500).json({ error: 'register-user相关的服务器内部出错' });
     }
   }
 );
@@ -89,17 +82,24 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
       return res.status(404).json({ error: '用户不存在，请先注册' })
     }
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: message }]
+    const response = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.BIGMODEL_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'glm-4',
+        messages: [{ role: 'user', content: message }],
+      })
     });
 
-    const aiMessage = response.choices[0].message?.content ?? 'AI未回复';
+    const data = await response.json();
+    const aiMessage = data.choices[0].message?.content ?? 'AI未回复';
 
     await db.insert(chats).values({ userId, message, reply: aiMessage });
 
     const channel = chatClient.channel('messaging', `chat-${userId}`, {
-      name: 'AI Chat',
       created_by_id: 'ai_bot',
     });
 

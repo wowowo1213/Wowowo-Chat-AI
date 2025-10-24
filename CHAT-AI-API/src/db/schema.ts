@@ -1,6 +1,6 @@
 import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
-export const charts = pgTable('chats', {
+export const chats = pgTable('chats', {
   id: serial('id').primaryKey(),
   userId: text('user_id').notNull(),
   message: text('message').notNull(),
@@ -16,6 +16,6 @@ export const users = pgTable('users', {
 })
 
 export type ChatInsert = typeof chats.$inferInsert;
-export type ChatSelect = typeof chats.$inferInsert;
-export type UserInsert = typeof chats.$inferInsert;
-export type UserSelect = typeof chats.$inferInsert;
+export type ChatSelect = typeof chats.$inferSelect;
+export type UserInsert = typeof users.$inferInsert;
+export type UserSelect = typeof users.$inferSelect;

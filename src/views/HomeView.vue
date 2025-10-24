@@ -11,7 +11,7 @@
         <div class="p-8 bg-gray-800 rounded-lg shadow-lg w-full max-w-md">
           <img :src="logoImage" alt="logo" class="mx-auto w-24 h-24 mb-4">
           <h1 class="text-2xl font-semibold mb-4 text-center">
-            欢迎来到WOWOWO AI CHAT！
+            欢迎来到WOWOWO AI CHAT!
           </h1>
           
           <input
@@ -32,7 +32,7 @@
             :disabled="loading"
             @click="handleLogin"
           >
-            {{ loading ? 'Loggin in..' : 'Start' }}
+            {{ loading ? 'Logging in..' : 'Start' }}
           </button>
 
           <p v-if="error" class="text-red-400 text-center mt-2">{{ error }}</p>
@@ -42,32 +42,46 @@
 </template>
 
 <script lang="ts" setup name="HomeView">
-import {ref} from 'vue';
+import { ref } from 'vue';
+import axios from 'axios';
+import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
 import logoImage from '@/assets/logo.png';
 // import backgroundSvg from '@/assets/background.svg';
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const name = ref('');
 const email = ref('');
 const loading = ref(false);
 const error = ref('');
 
-const handleLogin = () => {
+const handleLogin = async () => {
   if(!name.value || !email.value){
     error.value = '请输入用户名和邮箱';
     return;
   }
 
-  console.log('logging');
+  loading.value = true;
+  error.value = '';
+
+  try {
+    const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/register-user`, {
+      name:name.value,
+      email:email.value,
+    });
+
+    userStore.setUser({
+      userId: data.userId,
+      name: data.name,
+    });
+
+    router.push('/chat');
+  } catch (err) {
+    error.value = 'Something went wrong. Please try again'
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
-
-<style scoped>
-.home-container {
-  width: 100%;
-  height: 100vh;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-}
-</style>

@@ -13,9 +13,10 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.5",
     "express": "^5.1.0",
     "openai": "^6.6.0",
-    "stream-chat": "^9.24.0"
+    "stream-chat": "^9.25.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
