@@ -18,7 +18,12 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@tailwindcss/vite": "^4.1.16",
+    "drizzle-orm": "^0.44.6",
     "pinia": "^3.0.3",
+    "pinia-plugin-persistedstate": "^4.5.0",
+    "tailwindcss": "^4.1.16",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },

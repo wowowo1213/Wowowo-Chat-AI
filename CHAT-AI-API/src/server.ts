@@ -4,6 +4,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { StreamChat } from 'stream-chat';
 import OpenAI from 'openai';
+import { db } from './config/database.js';
+import { charts, users } from './db/schema.js'
+import { eq } from 'drizzle-orm';
+import { ChatCompletionMessageParam } from 'openai/resources';
 
 dotenv.config();
 
@@ -47,6 +51,13 @@ app.post(
         })
       }
 
+      const existingUser = await db.select().from(users).where(eq(users.userId, userId));
+
+      if (!existingUser.length) {
+        console.log('用户不存在，创建新用户');
+        await db.insert(users).values({ userId, name, email });
+      }
+
       res.status(200).json({ userId, name, email });
     } catch (error) {
       res.status(500).json({ error: '服务器内部错误' });
@@ -67,7 +78,15 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
     })
 
     if (!userRespose.users.length) {
-      return res.status(400).json({ error: '用户不存在，请先注册' });
+      return res
+        .status(400)
+        .json({ error: '用户不存在，请先注册' });
+    }
+
+    const existingUser = await db.select().from(users).where(eq(users.userId, userId));
+
+    if (!existingUser.length) {
+      return res.status(404).json({ error: '用户不存在，请先注册' })
     }
 
     const response = await openai.chat.completions.create({
@@ -76,6 +95,8 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
     });
 
     const aiMessage = response.choices[0].message?.content ?? 'AI未回复';
+
+    await db.insert(chats).values({ userId, message, reply: aiMessage });
 
     const channel = chatClient.channel('messaging', `chat-${userId}`, {
       name: 'AI Chat',
@@ -88,6 +109,26 @@ app.post('/chat', async (req: Request, res: Response): Promise<any> => {
     res.status(200).json({ reply: aiMessage });
   } catch (error) {
     console.log('AI响应出错', error);
+    res.status(500).json({ error: '服务器内部错误' });
+  }
+});
+
+app.post('/get-messages', async (req: Request, res: Response): Promise<any> => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: '用户ID不能为空' });
+  }
+
+  try {
+    const chatHistory = await db
+      .select()
+      .from(chats)
+      .where(eq(chats.userId, userId));
+
+    res.status(200).json({ message: chatHistory });
+  } catch (error) {
+    console.log('获取消息出错', error);
     res.status(500).json({ error: '服务器内部错误' });
   }
 })
