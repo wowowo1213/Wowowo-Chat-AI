@@ -3,6 +3,7 @@
 
 ## 简介
 Wowowo-Chat-AI是一个简易的AI聊天软件，使用TypeScript结合express以及NEON作为后端数据库，使用国内的Z智谱的glm-4模型作为AI聊天引擎。
+前端使用Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router
 
 ## 功能
 Wowowo-Chat-AI只能进行简易的聊天，AI会根据用户的输入生成回复；
