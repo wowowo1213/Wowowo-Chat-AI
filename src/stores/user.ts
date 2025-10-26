@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useUserStore = defineStore('user', {
   state: () => ({
     userId: null as string | null,
-    name: null as string | null
+    name: null as string | null,
   }),
   actions: {
     setUser(data: { userId: string; name: string }) {
@@ -15,5 +15,5 @@ export const useUserStore = defineStore('user', {
       this.name = null;
     },
   },
-  persist: true // 当页面重新加载时，保持用户登录状态
-})
+  persist: true, // 当页面重新加载时，保持用户登录状态
+});

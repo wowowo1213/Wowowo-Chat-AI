@@ -6,17 +6,19 @@ import { useUserStore } from './user';
 interface ChatMessage {
   message: string;
   reply: string;
+  createdAt: string;
 }
 
-interface FormattedMessage {
-  role: 'user' | 'ai';
+type FormattedMessage = {
+  role: 'user' | 'ai' | 'system';
   content: string;
-}
+  format?: 'text' | 'markdown';
+  createdAt?: string;
+};
 
 export const useChatStore = defineStore('chat', () => {
-  const messages = ref<{ role: string; content: string }[]>([]);
+  const messages = ref<FormattedMessage[]>([]);
   const isLoading = ref(false);
-
   const userStore = useUserStore();
 
   const loadChatHistory = async () => {
@@ -30,45 +32,70 @@ export const useChatStore = defineStore('chat', () => {
       if (!data.messages) return;
 
       messages.value = data.messages
-        .flatMap((msg: ChatMessage): FormattedMessage[] => [
-          { role: 'user', content: msg.message },
-          { role: 'ai', content: msg.reply },
-        ])
-        .filter((msg: FormattedMessage) => msg.content);
+        .sort(
+          (a: ChatMessage, b: ChatMessage) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        )
+        .flatMap((msg: ChatMessage) => [
+          {
+            role: 'user' as const,
+            content: msg.message,
+            format: 'text',
+            createdAt: msg.createdAt,
+          },
+          {
+            role: 'ai' as const,
+            content: msg.reply || '等待回复中...',
+            format: 'markdown',
+            createdAt: msg.createdAt,
+          },
+        ]);
     } catch (error) {
-      console.error('问题发生在stores/chat.ts', error);
+      console.error('加载历史消息失败', error);
+      messages.value.push({
+        role: 'system' as const,
+        content: '**历史消息加载失败**，请检查网络后重试',
+        format: 'markdown',
+      });
     }
   };
 
   const sendMessage = async (message: string) => {
-    if (!message.trim() || !userStore.userId) return;
+    if (!message.trim() || !userStore.userId || isLoading.value) return;
 
-    messages.value.push({ role: 'user', content: message });
-
+    const userMessage: FormattedMessage = {
+      role: 'user',
+      content: message,
+      format: 'text',
+      createdAt: new Date().toISOString(),
+    };
+    messages.value.push(userMessage);
     isLoading.value = true;
 
     try {
       const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/chat`, {
         message,
         userId: userStore.userId,
+        history: messages.value.filter((msg) => msg.role === 'user' || msg.role === 'ai'),
       });
 
-      messages.value.push({ role: 'ai', content: data.reply });
-    } catch (error) {
-      console.error('发送信息失败', error);
-      messages.value.push({
+      const aiMessage: FormattedMessage = {
         role: 'ai',
-        content: '巴拉巴拉巴拉~~~~，你在说甚麽，我什么也不知道，信息好像发送失败了😚',
+        content: data.reply || '**抱歉**，我没理解你的意思 😅',
+        format: 'markdown',
+        createdAt: new Date().toISOString(),
+      };
+      messages.value.push(aiMessage);
+    } catch (error) {
+      messages.value.push({
+        role: 'system',
+        content: '**消息发送失败** 📡\n请检查网络后重试',
+        format: 'markdown',
       });
     } finally {
       isLoading.value = false;
     }
   };
 
-  return {
-    messages,
-    isLoading,
-    loadChatHistory,
-    sendMessage,
-  };
+  return { messages, isLoading, loadChatHistory, sendMessage };
 });
