@@ -49,7 +49,7 @@ const loading = ref(false);
 const error = ref('');
 
 const handleLogin = async () => {
-  if (!name.value || !email.value) {
+  if (!name.value.trim() || !email.value.trim()) {
     error.value = '请输入用户名和邮箱';
     return;
   }

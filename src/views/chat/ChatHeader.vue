@@ -8,7 +8,7 @@
     </h1>
     <div>
       <button
-        class="mr-2 px-4 py-2 rounded-lg text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-gray-800 transition-colors duration-200"
+        class="mr-2 px-4 py-2 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200"
         @click="handleLogout"
       >
         Logout
@@ -26,6 +26,7 @@ import logoImg from '@/assets/logo.jpg';
 const router = useRouter();
 
 const handleLogout = () => {
+  // 这边清空用户信息，使用userStore里的封装方法
   router.push('./');
 };
 </script>

@@ -1,21 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/views/HomeView.vue';
-import ChatView from '@/views/ChatView/index.vue';
+import Login from '@/views/login/index.vue';
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView,
-  },
-  {
-    path: '/chat',
-    name: 'chat',
-    component: ChatView,
-  },
-];
-
-export const router = createRouter({
+const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: [
+    { path: '/', name: 'login', component: Login },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: () => import('@/views/chat/index.vue'),
+    },
+  ],
 });
+
+export default router;

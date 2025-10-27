@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div
+    class="min-h-screen w-80 flex flex-col justify-between border-r-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 transition-all duration-200"
+  >
     <SiderbarHeader />
-    <ChatHistory />
+    <ChatHistory class="flex-grow" />
     <UserInfo />
   </div>
 </template>

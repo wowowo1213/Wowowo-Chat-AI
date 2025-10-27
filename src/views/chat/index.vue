@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen flex dark:bg-gray-900 transition-colors duration-200">
+  <div class="min-h-screen min-w-250 flex dark:bg-gray-900 transition-all duration-200">
     <div><Siderbar /></div>
 
-    <div class="flex-grow">
+    <div class="flex-grow flex flex-col justify-between">
       <ChatHeader />
-      <ChatMessage />
+      <ChatMessage class="flex-grow" />
       <ChatInput />
     </div>
   </div>
