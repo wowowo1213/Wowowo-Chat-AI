@@ -9,7 +9,11 @@
         class="p-8 max-w-md rounded-lg bg-blue-400 dark:bg-gray-700 transition-colors duration-200"
       >
         <img :src="logoImg" alt="logo" class="mx-auto w-24 h-24 mb-4" />
-        <h1 class="text-2xl font-semibold mb-4 text-center">欢迎来到WOWOWO CHAT AI😊</h1>
+        <h1
+          class="text-2xl font-semibold mb-4 text-center dark:text-gray-200 transition-all duration-200"
+        >
+          欢迎来到WOWOWO CHAT AI😊
+        </h1>
         <input
           type="text"
           class="w-full p-2 mb-2 rounded-lg focus:outline-none border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 transition-colors duration-200"
@@ -18,12 +22,12 @@
         />
         <input
           type="email"
-          class="w-full p-2 mb-2 rounded-lg focus:outline-none border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 transition-colors duration-200"
+          class="w-full p-2 mb-2 rounded-lg focus:outline-none border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 transition-all duration-200"
           placeholder="Email"
           v-model="email"
         />
         <button
-          class="w-full p-2 bg-blue-600 rounded-lg font-medium cursor-pointer hover:bg-blue-800"
+          class="w-full p-2 rounded-lg font-medium cursor-pointer bg-blue-300 hover:bg-blue-500 dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-gray-200 transition-all duration-200"
           @click="handleLogin"
         >
           {{ loading ? 'Logging in..' : 'Start' }}
