@@ -38,13 +38,13 @@ export const useChatStore = defineStore('chat', () => {
         )
         .flatMap((msg: ChatMessage) => [
           {
-            role: 'user' as const,
+            role: 'user',
             content: msg.message,
             format: 'text',
             createdAt: msg.createdAt,
           },
           {
-            role: 'ai' as const,
+            role: 'ai',
             content: msg.reply || '等待回复中...',
             format: 'markdown',
             createdAt: msg.createdAt,

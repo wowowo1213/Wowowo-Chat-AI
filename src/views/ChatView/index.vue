@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup name="ChatView">
-import { onMounted, nextTick } from 'vue';
+import { onMounted, nextTick, watch } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useChatStore } from '@/stores/chat';
 import { useRouter } from 'vue-router';
@@ -53,17 +53,35 @@ if (!userStore.userId) {
   router.push('/');
 }
 
+const scrollToLastMessage = () => {
+  nextTick(() => {
+    const container = document.getElementById('chat-container');
+    if (!container) return;
+
+    const messages = container.querySelectorAll('.flex.items-start.gap-2');
+    if (messages.length === 0) return;
+
+    const lastMessage = messages[messages.length - 1];
+
+    const lastMessageTop = lastMessage.getBoundingClientRect().top;
+    const containerTop = container.getBoundingClientRect().top;
+    const offset = lastMessageTop - containerTop;
+
+    container.scrollTop = container.scrollTop + offset;
+  });
+};
+
 const scrollToBottom = () => {
   nextTick(() => {
-    const chatContainer = document.getElementById('chat-container');
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+    const container = document.getElementById('chat-container');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
   });
 };
 
 onMounted(() => {
-  chatStore.loadChatHistory().then(() => scrollToBottom);
+  chatStore.loadChatHistory().then(() => scrollToBottom());
   scrollToBottom();
 });
 

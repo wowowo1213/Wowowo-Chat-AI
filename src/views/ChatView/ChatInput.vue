@@ -8,6 +8,7 @@
       autocomplete="off"
       class="flex-1 p-2 rounded-lg bg-white text-gray-500 border focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors duration-200 dark:bg-gray-600 dark:text-gray-100"
     />
+
     <button
       @click="sendMessage"
       class="ml-2 px-4 py-2 bg-blue-500 rounded-lg text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"

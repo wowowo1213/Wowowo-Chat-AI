@@ -4,17 +4,17 @@
 
 ## 简介
 
-Wowowo-Chat-AI是一个简易的AI聊天软件，使用TypeScript结合express、Stream-Chat、NEON作为后端数据库，使用国内的Z智谱的glm-4模型作为AI聊天引擎，支持简单对话(OPENAI免费额度有限，之后要付费😟)
+Wowowo-Chat-AI是一个简易的AI聊天软件，使用TypeScript结合nextjs、redis、mongodb作为后端数据库，使用国内的Z智谱的glm-4模型作为AI聊天引擎，支持简单对话(OPENAI免费额度有限，之后要付费😟)
 
-前端使用 Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router
+前端使用 Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + VantUI
 
 头像用的芙宁娜，想用啥头像就到assets中去修改就行了，等宽高比较好，不然会不协调
 
 ## 功能
 
-响应式布局，使用tailwind结合flex进行css样式编写和布局，组件位置会随窗口的大小变化；
+路由懒加载
 
-聊天界面，聊天的标题 Wowowo Chat AI 始终保持在hedaer组件的中间部分，左边界在header的中间，然后左移自身的一半；
+响应式布局，使用tailwind结合flex进行css样式编写和布局，组件位置会随窗口的大小变化；
 
 使用TailwindCSS进行白天黑夜主题切换，切换过渡时间设置为0.2s，且进行本地保存，页面刷新之后依旧会保留刷新前的主题，且组件挂载之后会自动进行一次读取主题颜色(在组件ThemeButton中实现)；
 
@@ -23,6 +23,8 @@ Wowowo-Chat-AI只能进行简易的聊天，AI会根据用户的输入生成回�
 ai聊天结果为markdown模式，故此处进行了处理，并实现对应换行，不然会回复结果会很丑，变成一堆；
 
 聊天记录可以进行保存，但是刷新页面或者重新启动之后就失效了；
+
+VantUI使用按需导入
 
 这边还可以优化一下：
 

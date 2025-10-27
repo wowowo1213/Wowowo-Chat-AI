@@ -3,6 +3,7 @@
     <ThemeButton
       class="absolute right-10 top-10 rounded-lg px-4 py-2 text-white transition-colors duration-200 bg-blue-600 hover:bg-blue-800 dark:bg-gray-700 dark:hover:bg-gray-900"
     />
+
     <div
       class="min-h-screen flex items-center justify-center dark:bg-gray-900 text-white transition-colors duration-200"
     >
