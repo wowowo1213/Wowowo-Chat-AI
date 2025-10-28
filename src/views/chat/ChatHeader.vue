@@ -8,7 +8,7 @@
     </h1>
     <div>
       <button
-        class="mr-2 px-4 py-2 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200"
+        class="mr-2 px-4 py-2 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-amber-500 transition-all duration-200"
         @click="handleLogout"
       >
         Logout

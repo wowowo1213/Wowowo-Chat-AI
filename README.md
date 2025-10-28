@@ -6,23 +6,23 @@
 
 Wowowo-Chat-AI是一个简易的AI聊天软件，使用TypeScript结合nextjs、redis、mongodb作为后端数据库，使用国内的Z智谱的glm-4模型作为AI聊天引擎，支持简单对话(OPENAI免费额度有限，之后要付费😟)
 
-前端使用 Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Vant UI
+前端使用 Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Element Plus，不使用Vant UI是因为tailwind的部分样式(button中的text的颜色设置部分)好像和Vant UI中的icon部分不兼容
+
+后端使用 Nest.js + TypeScript，并使用了全局异常过滤器和全局响应拦截器，响应器用于处理后端接口返回数据的统一处理
 
 头像用的芙宁娜，想用啥头像就到assets中去修改就行了，等宽高比较好，不然会不协调
 
 ai回答界面仿制的文心一言，主要个人使用这个比较多，hhh~~~
 
-Vant 使用按需引入
-
 ## 功能
 
-路由懒加载，其实就一个ChatView懒加载
+Element 使用按需引入，减少性能消耗和打包消耗；
+
+路由懒加载，其实就一个ChatView懒加载；
 
 响应式布局，使用tailwind结合flex进行css样式编写和布局，组件位置会随窗口的大小变化；
 
 使用TailwindCSS进行白天黑夜主题切换，切换过渡时间设置为0.2s，且进行本地保存，页面刷新之后依旧会保留刷新前的主题，且组件挂载之后会自动进行一次读取主题颜色(在组件ThemeButton中实现)；
-
-问题输入框的高度会随着用户的输入而变化，但是设置了最大高度
 
 Wowowo-Chat-AI只能进行简易的聊天，AI会根据用户的输入生成回复，可以联系上下文，但是模型比较呆，效果不好；
 
@@ -36,17 +36,29 @@ ai聊天结果为markdown模式，故此处进行了处理，并实现对应换�
 
 2、无法进行本地保存，每次刷新页面或者重新启动之后，聊天记录就没了；
 
-3、实现根据新的回答页面视口跟着跳转到最新的输入问题的地方
+3、实现根据新的回答页面视口跟着跳转到最新的输入问题的地方；
 
-4、每次进入，选择进入ChatHome，然后点击历史记录再进行跳转
+4、每次进入，选择进入ChatHome，然后点击历史记录再进行跳转；
+
+5、上传文件的输入框图标和用户提问的文件图标优化一下css样式
 
 ## 使用方法
 
-先运行CHAT-AI-API，再运行Wowowo-Chat-AI
+先运行wowowo-chat-api，再运行Wowowo-Chat-AI
 
 尽量写详细一点，因为自己也容易忘记🤣🤣
 
-### CHAT-AI-API的使用
+### wowowo-chat-api的使用
+
+后端使用 nest.js
+
+使用方法：
+
+```bash
+npm run start
+# 热更新使用
+npm run start:dev
+```
 
 ### Wowowo-Chat-AI的使用
 

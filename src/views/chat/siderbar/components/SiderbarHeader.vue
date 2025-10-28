@@ -9,7 +9,7 @@
 
     <div class="mt-4 w-full flex justify-center">
       <button
-        class="px-6 py-2 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200"
+        class="px-6 py-2 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-amber-500 transition-all duration-200"
         @click="createNewDialog"
       >
         新建对话
