@@ -15,8 +15,8 @@ export class AppController {
     const res = this.appService.loginUser(username, pwd);
 
     return {
+      message: res,
       result: body,
-      msg: res,
     };
   }
 

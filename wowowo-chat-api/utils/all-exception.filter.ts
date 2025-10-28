@@ -1,14 +1,12 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
+
+import { MyLogger } from './no-timestamp-logger';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new MyLogger();
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -20,13 +18,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse();
-      message =
-        typeof res === 'string' ? res : (res as any)?.message || message;
+      message = typeof res === 'string' ? res : (res as any)?.message || message;
     } else if (exception instanceof Error) {
       message = exception.message || message;
     }
 
     console.error('全局异常捕获', exception);
+
+    this.logger.error(message);
 
     response.status(status).json({
       statusCode: status,

@@ -3,9 +3,10 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from 'utils/all-exception.filter';
 import { TransformInterceptor } from '../utils/transform.interceptor';
+import { MyLogger } from '../utils/no-timestamp-logger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: new MyLogger() });
 
   app.useGlobalPipes(
     new ValidationPipe({
