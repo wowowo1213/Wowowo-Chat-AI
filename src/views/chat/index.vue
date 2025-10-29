@@ -8,7 +8,7 @@
 
     <div class="flex-grow flex flex-col justify-between">
       <ChatHeader />
-      <ChatMessage class="flex-grow" />
+      <ChatMessage />
       <ChatInput />
     </div>
   </div>
