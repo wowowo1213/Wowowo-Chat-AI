@@ -1,87 +1,92 @@
-# Wowowo-Chat-AI
+# **Wowowo-Chat-AI**
 
-一个简易的AI聊天软件
+**一个简易的AI聊天软件（基于通义千问-Plus）**
 
-## 简介
+---
 
-Wowowo-Chat-AI是一个简易的AI聊天软件，使用TypeScript结合nextjs、redis、mongodb作为后端数据库，使用国内的Z智谱的glm-4模型作为AI聊天引擎，支持简单对话(OPENAI免费额度有限，之后要付费😟)
+## **项目简介**
 
-前端使用 Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Element Plus，不使用Vant UI是因为tailwind的部分样式(button中的text的颜色设置部分)好像和Vant UI中的icon部分不兼容
+Wowowo-Chat-AI 是一个 **全栈AI聊天应用**，采用 **TypeScript** 开发，前后端分离架构：
 
-后端使用 Nest.js + TypeScript，并使用了全局异常过滤器和全局响应拦截器，响应器用于处理后端接口返回数据的统一处理
+- **前端**：Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Element Plus
+  - 响应式布局，支持 **白天/黑夜主题切换**（本地持久化存储，刷新页面后依旧会自动读取上一次的结果，在通用组件ThemeButton.vue中实现）
+  - 仿 **文心一言** 界面
+  - 支持 **上下文对话**
+- **后端**：Nest.js + TypeScript
+  - 使用 **通义千问-Plus（Qwen-Plus）** 作为AI引擎
+  - 集成 **Redis**（缓存）、**MongoDB**（聊天记录存储）
+  - Nest.js中使用了全局异常过滤器 + 统一响应拦截器
 
-头像用的芙宁娜，想用啥头像就到assets中去修改就行了，等宽高比较好，不然会不协调
+---
 
-ai回答界面仿制的文心一言，主要个人使用这个比较多，hhh~~~
+## **功能特性**
 
-## 功能
+| 模块        | 功能描述                                       |
+| ----------- | ---------------------------------------------- |
+| **前端**    |                                                |
+| ✅ 界面     | 仿文心一言，响应式设计（TailwindCSS + Flex）   |
+| ✅ 主题     | 白天/黑夜模式切换（0.2s过渡动画，本地存储）    |
+| ✅ 交互     | 路由懒加载（仅ChatView）、Element Plus按需引入 |
+| ✅ 回复格式 | Markdown渲染 + 自动换行优化                    |
+| **后端**    |                                                |
+| ✅ AI引擎   | 通义千问-Plus（Qwen-Plus）流式响应             |
+| ✅ 数据存储 | MongoDB（聊天记录）、Redis（缓存）             |
+| ✅ 优化     | 全局异常过滤器、统一响应拦截器                 |
 
-Element 使用按需引入，减少性能消耗和打包消耗；
+---
 
-路由懒加载，其实就一个ChatView懒加载；
+## **待优化点**
 
-响应式布局，使用tailwind结合flex进行css样式编写和布局，组件位置会随窗口的大小变化；
+1. **视口跳转**：新回复时自动滚动到最新消息
+2. **历史记录**：优化从ChatHome跳转到历史记录的逻辑
+3. **UI细节**：上传文件图标样式优化
 
-使用TailwindCSS进行白天黑夜主题切换，切换过渡时间设置为0.2s，且进行本地保存，页面刷新之后依旧会保留刷新前的主题，且组件挂载之后会自动进行一次读取主题颜色(在组件ThemeButton中实现)；
+---
 
-Wowowo-Chat-AI只能进行简易的聊天，AI会根据用户的输入生成回复，可以联系上下文，但是模型比较呆，效果不好；
+## **快速开始**
 
-ai聊天结果为markdown模式，故此处进行了处理，并实现对应换行，不然会回复结果会很丑，变成一堆；
+### **1. 环境准备**
 
-聊天记录可以进行保存，但是刷新页面或者重新启动之后就失效了；
+- **Node.js** ≥ 18.x
+- **MongoDB** 和 **Redis**（本地或云服务）
+- **阿里云通义千问API Key**（[申请地址](https://dashscope.console.aliyun.com/)）
 
-这边还可以优化一下：
+---
 
-1、ai给出回答时是一次性给出所有答案，而不是流水式；
-
-2、无法进行本地保存，每次刷新页面或者重新启动之后，聊天记录就没了；
-
-3、实现根据新的回答页面视口跟着跳转到最新的输入问题的地方；
-
-4、每次进入，选择进入ChatHome，然后点击历史记录再进行跳转；
-
-5、上传文件的输入框图标和用户提问的文件图标优化一下css样式
-
-## 使用方法
-
-先运行wowowo-chat-api，再运行Wowowo-Chat-AI
-
-尽量写详细一点，因为自己也容易忘记🤣🤣
-
-### wowowo-chat-api的使用
-
-后端使用 nest.js
-
-使用方法：
+### **2. 后端启动（wowowo-chat-api）**
 
 ```bash
-npm run start
-# 热更新使用
-npm run start:dev
-```
+# 克隆仓库
+git clone https://github.com/Wowowo-Chat-AI.git
 
-### Wowowo-Chat-AI的使用
+# 选择仓库
+cd wowowo-chat-api
 
-1. 安装依赖
-
-```
+# 安装依赖
 npm install
+
+# 配置环境变量
+# .env文件
+# 修改以下字段：
+# DASHSCOPE_API_KEY=你的通义千问API Key
+
+# 启动服务
+npm run start:dev  # 开发模式（热更新）
+npm run start      # 生产模式
 ```
 
-2. 配置环境变量
+### **3. 前端启动（Wowowo-Chat-AI）**
 
-在src文件同级目录下创建.env文件，并添加以下内容(这边也已经配置好了)：
+```bash
+# 安装依赖
+npm install
 
-VITE_API_URL = http://localhost:7000 ，这个为CHAT-AI-API的地址，与上面的PORT保持一致就行;
+# 配置环境变量
+# .env文件
+# 修改以下字段：
+# 修改 VITE_API_URL 为后端地址（如 http://localhost:3000），nest默认运行在3000
 
-3. 启动服务
-
-```
+# 启动服务
 npm run dev
 ```
 
-### 运行提醒事项
-
-登陆界面是一个用户名和邮箱，暂时没有设置用户名和邮箱验证
-
-登录之后就是正常的对话界面了

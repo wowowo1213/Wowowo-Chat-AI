@@ -16,13 +16,13 @@
             <div>
               <img
                 :src="logoImg"
-                alt="文件图片"
+                alt="图片"
                 class="w-14 h-14 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200"
               />
             </div>
             <div class="flex flex-col">
               <span class="text-sm text-gray-700 dark:text-gray-300 transition-all duration-200">
-                文档标题.pdf
+                图片标题.pdf
               </span>
               <span class="text-sm text-gray-700 dark:text-gray-300 transition-all duration-200">
                 114514kb
@@ -34,13 +34,13 @@
             <div>
               <img
                 :src="logoImg"
-                alt="文件图片"
+                alt="图片"
                 class="w-14 h-14 text-sm text-gray-700 dark:text-gray-300 transition-all duration-200"
               />
             </div>
             <div class="flex flex-col">
               <span class="text-sm text-gray-700 dark:text-gray-300 transition-all duration-200">
-                文档标题.pdf
+                图片标题.pdf
               </span>
               <span class="text-sm text-gray-700 dark:text-gray-300 transition-all duration-200">
                 114514kb
@@ -53,7 +53,7 @@
 
     <div class="bg-blue-50 dark:bg-gray-800 rounded-lg p-4 transition-all duration-200">
       <p class="text-gray-800 dark:text-gray-100 transition-all duration-200">AI回复内容...</p>
-      <p class="mt-3 text-gray-500">回答来自 xxx ai 大模型</p>
+      <p class="mt-3 text-gray-500">回答来自 通义千问-plus 大模型</p>
     </div>
   </div>
 </template>

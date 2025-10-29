@@ -22,12 +22,12 @@
           style="display: none"
         />
 
-        <el-tooltip effect="dark" content="上传文件" placement="top">
+        <el-tooltip effect="dark" content="上传图片" placement="top">
           <button
             class="rounded-full w-6 h-6 cursor-pointer hover:scale-130 hover:rotate-360 transition-all duration-200"
             @click="loadFile"
           >
-            <img :src="loadIcon" alt="上传文件" class="rounded-full w-full h-full" />
+            <img :src="loadIcon" alt="上传图片" class="rounded-full w-full h-full" />
           </button>
         </el-tooltip>
       </div>

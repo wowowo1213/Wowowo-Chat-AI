@@ -10,8 +10,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // 去掉没有定义的字段
-      forbidNonWhitelisted: true, // 如果有多余的字段抛出错误
+      whitelist: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
