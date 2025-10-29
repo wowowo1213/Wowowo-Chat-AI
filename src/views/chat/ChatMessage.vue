@@ -63,4 +63,18 @@ import { ref } from 'vue';
 import logoImg from '@/assets/logo.jpg';
 
 const isFile = ref(false);
+
+import { apiChat } from '@/api/chat';
+
+async function handleChat() {
+  try {
+    const response = await apiChat(['你好，我是wowowo，介绍一下前端开发是什么']);
+    console.log('API 返回结果:', response);
+  } catch (error) {
+    console.error('请求失败:', error);
+  }
+}
+
+// 调用函数
+handleChat();
 </script>

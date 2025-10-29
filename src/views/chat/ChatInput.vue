@@ -5,7 +5,7 @@
     <el-input
       type="textarea"
       v-model="message"
-      placeholder="请输入问题"
+      placeholder="请输入问题( shift + enter 换行)"
       class="max-h-44 font-bold"
       resize="none"
       :autosize="{ minRows: 2, maxRows: 4 }"
@@ -33,7 +33,7 @@
       </div>
 
       <button
-        @click="sendMessage"
+        @click="handleSubmit"
         class="min-h-12 min-w-26 ml-4 px-4 py-2 h-11 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-amber-500 transition-all duration-200"
       >
         点我发送
@@ -46,29 +46,34 @@
 import { ref } from 'vue';
 import loadIcon from '@/assets/icon1.jpg';
 
+// 输入框相关
 const message = ref('');
 
-// 这边实现只有 shift + enter 时才会换行，单按 enter 会发送信息
 const handleKeydown = (event: KeyboardEvent) => {
+  // 这边实现只有 shift + enter 时才会换行，单按 enter 会发送信息
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
-    sendMessage();
+    handleSubmit();
     message.value = '';
   }
 };
 
+// 文件上传相关
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const loadFile = () => {
   if (fileInputRef.value) {
-    fileInputRef.value.click();
+    fileInputRef.value.click(); // 通过模拟点击input来达到点击图像然后上传
   }
 };
 
 const uploadFileType = '.pdf,.docx,.jpg,.png';
 
-const sendMessage = () => {
-  console.log(111);
+// 消息处理
+const handleSubmit = () => {
+  const trimedMessage = message.value.trim();
+  if (!trimedMessage) alert('问题不能为空');
+  message.value = '';
 };
 </script>
 

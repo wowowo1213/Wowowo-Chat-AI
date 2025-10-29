@@ -25,7 +25,8 @@ export class UserinfoController {
   @Get('loginuser')
   loginUser() {
     return {
-      message: '这是一个用户登录接口',
+      result: {},
+      message: '这是一个登录接口',
     };
   }
 }
