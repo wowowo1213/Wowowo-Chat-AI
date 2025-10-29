@@ -45,6 +45,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import loadIcon from '@/assets/icon1.jpg';
+import { useChatStore } from '@/stores/chat';
+
+const chatStore = useChatStore();
 
 // 输入框相关
 const message = ref('');
@@ -69,11 +72,20 @@ const loadFile = () => {
 
 const uploadFileType = '.pdf,.docx,.jpg,.png';
 
-// 消息处理
+// 消息处理相关
 const handleSubmit = () => {
-  const trimedMessage = message.value.trim();
-  if (!trimedMessage) alert('问题不能为空');
+  const trimmedMessage = message.value.trim();
+  if (!trimmedMessage) alert('问题不能为空');
+
+  chatStore.chatPushMessage({
+    role: 'user',
+    content: trimmedMessage,
+  });
+
   message.value = '';
+
+  const aiMessage = { role: 'assistant', content: '', attachments: [] };
+  chatStore.chatPushMessage(aiMessage);
 };
 </script>
 

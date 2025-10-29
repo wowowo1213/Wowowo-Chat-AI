@@ -33,6 +33,7 @@ interface Message {
   role: string;
   content: string;
   attachments?: Attachment[];
+  _key?: string; // 用于虚拟滚动唯一标识
 }
 
 interface ChatState {
@@ -151,9 +152,14 @@ export const useChatStore = defineStore('chat', {
       this.time[key] = Date.now();
     },
 
-    getMessages(chatName?: string) {
-      const name = chatName || this.curname;
-      return this.session[name] || [];
+    getCurrentMessages() {
+      const currentMessages = this.session[this.curname] || [];
+
+      return currentMessages.map((item, index) => ({
+        ...item,
+        attachments: Array.isArray(item.attachments) ? item.attachments : [],
+        _key: `${item.role}-${index}`, // _key用来进行虚拟列表的渲染
+      }));
     },
 
     clearMessages(chatName?: string) {
