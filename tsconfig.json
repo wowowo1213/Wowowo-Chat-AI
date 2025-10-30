@@ -1,4 +1,8 @@
 {
+  "compilerOptions": {
+    "lib": ["es2023", "dom"], // 或 "esnext"
+    "target": "es2020" // 确保 target 也支持 ES2020+
+  },
   "files": [],
   "references": [
     {

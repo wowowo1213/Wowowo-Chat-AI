@@ -20,14 +20,15 @@
           :accept="uploadFileType"
           ref="fileInputRef"
           style="display: none"
+          @change="handleFileChange"
         />
 
-        <el-tooltip effect="dark" content="上传图片" placement="top">
+        <el-tooltip effect="dark" content="上传文件" placement="top">
           <button
             class="rounded-full w-6 h-6 cursor-pointer hover:scale-130 hover:rotate-360 transition-all duration-200"
             @click="loadFile"
           >
-            <img :src="loadIcon" alt="上传图片" class="rounded-full w-full h-full" />
+            <img :src="loadIcon" alt="上传文件" class="rounded-full w-full h-full" />
           </button>
         </el-tooltip>
       </div>
@@ -44,8 +45,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import loadIcon from '@/assets/icon1.jpg';
 import { useChatStore } from '@/stores/chat';
+import type { Attachment } from '@/stores/chat';
+import { chatService } from '@/services/chat';
+import loadIcon from '@/assets/icon1.jpg';
+import { connect } from 'http2';
 
 const chatStore = useChatStore();
 
@@ -67,29 +71,69 @@ const fileInputRef = ref<HTMLInputElement | null>(null);
 
 const loadFile = () => {
   if (fileInputRef.value) {
-    fileInputRef.value.click(); // 通过模拟点击input来达到点击图像然后上传
+    fileInputRef.value.click(); // 通过模拟点击input来达到点击图标然后实现上传
+  }
+};
+
+const selectedFiles = ref<File[]>([]);
+
+const handleFileChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files) {
+    selectedFiles.value = Array.from(input.files);
   }
 };
 
 const uploadFileType = '.pdf,.docx,.jpg,.png';
 
+const readFileAsText = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+};
+
 // 消息处理相关
-const handleSubmit = () => {
+const handleSubmit = async () => {
   const trimmedMessage = message.value.trim();
   if (!trimmedMessage) {
     alert('问题不能为空');
     return;
   }
 
-  chatStore.chatPushMessage({
+  const userMessage = {
     role: 'user',
     content: trimmedMessage,
-  });
+    attachments: [] as Attachment[],
+  };
+
+  if (selectedFiles.value.length > 0) {
+    userMessage.attachments = await Promise.all(
+      selectedFiles.value.map(async (file) => {
+        return {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          body: await readFileAsText(file),
+        };
+      }),
+    );
+    selectedFiles.value = [];
+  }
+
+  chatStore.chatPushMessage(userMessage);
+
+  try {
+    const messages = chatStore.session[chatStore.curname] || [];
+    if (!messages) return alert('当前对话为空'); // 感觉判断一下比较好
+    await chatService.connectToStream(messages);
+  } catch (err) {
+    console.log('流式对话前端提交处理', err);
+  }
 
   message.value = '';
-
-  const aiMessage = { role: 'assistant', content: '', attachments: [] };
-  chatStore.chatPushMessage(aiMessage);
 };
 </script>
 

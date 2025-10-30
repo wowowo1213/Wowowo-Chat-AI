@@ -17,6 +17,13 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new TransformInterceptor());
 
+  // 到这边解决跨域
+  app.enableCors({
+    origin: '*', // 允许所有来源
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type',
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

@@ -16,15 +16,21 @@ interface ChatRequest {
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  // localhost:3000/caht/stream-sse，使用post
+  // localhost:3000/chat/stream-sse，使用post
   @Post('stream-sse')
   async streamChatSSE(@Body() body: ChatRequest, @Res() res: Response) {
+    // 这边的messages得为一个JSON字符串，里面格式为：
+    // {
+    //   "messages": [
+    //     { "role": "user", "content": "前端开发是什么" }
+    //   ]
+    // }
     const messages = body.messages;
     try {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
-      res.setHeader('Access-Control-Allow-Origin', '*'); // 解决跨域，这个设置为*
+      res.setHeader('Access-Control-Allow-Origin', '*'); // 这边解决跨域无效？？
 
       res.status(HttpStatus.OK);
 

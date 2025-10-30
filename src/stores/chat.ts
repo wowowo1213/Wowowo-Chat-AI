@@ -2,13 +2,7 @@ import { defineStore } from 'pinia';
 
 const DEFAULT_CHAT_NAME = '新对话';
 
-const formatFileSize = (size: number): string => {
-  if (size < 1024) return `${size}B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)}KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)}MB`;
-};
-
-interface Attachment {
+export interface Attachment {
   name: string;
   size: number;
   type?: string;
@@ -16,20 +10,7 @@ interface Attachment {
   note?: string;
 }
 
-const describeAttachment = (attachment?: Attachment): string => {
-  if (!attachment) return '';
-  const { name, size, type, body, note } = attachment;
-  const header = [`文件名: ${name}`, `大小: ${formatFileSize(size)}`];
-  if (type) {
-    header.push(`类型: ${type}`);
-  }
-
-  const bodyText = body ? `内容预览:\n${body.slice(0, 4000)}` : note || '未提供内容';
-
-  return `${header.join(' | ')}\n${bodyText}`;
-};
-
-interface Message {
+export interface Message {
   role: string;
   content: string;
   attachments?: Attachment[];
@@ -40,18 +21,14 @@ interface ChatState {
   session: Record<string, Message[]>;
   curname: string;
   time: Record<string, number>;
-  reason: Record<string, string[]>;
-  showReason: Record<string, boolean[]>;
 }
 
 export const useChatStore = defineStore('chat', {
   state: (): ChatState => {
     return {
-      session: { [DEFAULT_CHAT_NAME]: [] }, // session 用来保存多个对话历史记录，一个对话历史记录Chat为数组，该数组中包含多个问答message，每个对话历史记录都有不同的 curname
+      session: { [DEFAULT_CHAT_NAME]: [] }, // session 用来保存多个对话历史记录，一个对话历史记录Chat为数组，chat即为messages，该数组中包含多个问答message，每个对话历史记录chat都有不同的 curname
       curname: DEFAULT_CHAT_NAME, // 当前选中的对话历史记录的名称
-      time: {}, // 用来保存每个对话chat最近一次的更新的时间，使用每个Chat的curname来读取
-      reason: { [DEFAULT_CHAT_NAME]: [] }, // 用于存储 AI 思考过程的中间结果
-      showReason: { [DEFAULT_CHAT_NAME]: [] }, // 控制每条推理信息是否展开显示
+      time: {}, // 用来保存每个对话chat最近一次的更新的时间
     };
   },
   actions: {
@@ -59,8 +36,6 @@ export const useChatStore = defineStore('chat', {
       this.session = {};
       this.curname = DEFAULT_CHAT_NAME;
       this.time = {};
-      this.reason = {};
-      this.showReason = {};
     },
 
     getAllChats() {
@@ -86,8 +61,6 @@ export const useChatStore = defineStore('chat', {
       this.session[name] = [];
       this.curname = name;
       this.time[name] = Date.now();
-      this.reason[name] = [];
-      this.showReason[name] = [];
     },
 
     updateChatName(newName: string) {
@@ -108,20 +81,16 @@ export const useChatStore = defineStore('chat', {
         return;
       }
 
-      if (this.session[currentName] && this.reason[currentName] && this.showReason[currentName]) {
+      if (this.session[currentName]) {
         this.session[trimmed] = this.session[currentName];
         this.curname = trimmed; // 使用currentName指向了，所以不用担心curname的变换会丢失原先的指向，主要我有强迫症，更改顺序尽量保持和初始一样
         this.time[trimmed] = Date.now();
-        this.reason[trimmed] = this.reason[currentName];
-        this.showReason[trimmed] = this.showReason[currentName];
       } else {
-        throw new Error('currentName在chat.ts的存储有问题！');
+        throw new Error('currentName在chatStore中的存储有问题！');
       }
 
       delete this.session[currentName];
       delete this.time[currentName];
-      delete this.reason[currentName];
-      delete this.showReason[currentName];
     },
 
     selectChat(name: string) {
@@ -137,8 +106,6 @@ export const useChatStore = defineStore('chat', {
       }
       delete this.session[name];
       delete this.time[name];
-      delete this.reason[name];
-      delete this.showReason[name];
     },
 
     chatPushMessage(msg: Message) {
@@ -148,7 +115,12 @@ export const useChatStore = defineStore('chat', {
         content: msg.content,
         attachments: msg.attachments || [],
       };
-      this.session[key]?.push(message);
+
+      if (!this.session[key]) {
+        this.session[key] = [];
+      }
+
+      this.session[key].push(message);
       this.time[key] = Date.now();
     },
 
@@ -166,20 +138,17 @@ export const useChatStore = defineStore('chat', {
       const key = this.curname;
       const chat = this.session[key];
       if (chat) {
-        const lastMessage = chat[chat.length - 1];
-        if (lastMessage) {
-          lastMessage.content += delta;
-        }
-      }
-    },
+        if (chat[chat.length - 1]!.role !== 'assistant') {
+          chat.push({
+            role: 'assistant',
+            content: delta,
+            attachments: [],
+          });
+        } else {
+          const lastMessage = chat[chat.length - 1];
+          lastMessage!.content += delta;
 
-    reasonPush(delta: string) {
-      const key = this.curname;
-      const reasoningList = this.reason[key];
-      if (reasoningList) {
-        const last = reasoningList[reasoningList.length - 1];
-        if (last !== undefined) {
-          reasoningList[reasoningList.length - 1] = `${last}${delta}`;
+          this.time[key] = Date.now();
         }
       }
     },
