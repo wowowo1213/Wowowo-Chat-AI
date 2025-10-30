@@ -14,9 +14,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-
   app.useGlobalFilters(new AllExceptionsFilter());
-
   app.useGlobalInterceptors(new TransformInterceptor());
 
   await app.listen(process.env.PORT ?? 3000);

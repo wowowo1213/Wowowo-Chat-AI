@@ -76,7 +76,10 @@ const uploadFileType = '.pdf,.docx,.jpg,.png';
 // 消息处理相关
 const handleSubmit = () => {
   const trimmedMessage = message.value.trim();
-  if (!trimmedMessage) alert('问题不能为空');
+  if (!trimmedMessage) {
+    alert('问题不能为空');
+    return;
+  }
 
   chatStore.chatPushMessage({
     role: 'user',

@@ -143,15 +143,13 @@ export const useChatStore = defineStore('chat', {
 
     chatPushMessage(msg: Message) {
       const key = this.curname;
-      if (msg.content) {
-        const message: Message = {
-          role: msg.role,
-          content: msg.content,
-          attachments: msg.attachments || [],
-        };
-        this.session[key]?.push(message);
-        this.time[key] = Date.now();
-      }
+      const message: Message = {
+        role: msg.role,
+        content: msg.content,
+        attachments: msg.attachments || [],
+      };
+      this.session[key]?.push(message);
+      this.time[key] = Date.now();
     },
 
     getCurrentMessages() {

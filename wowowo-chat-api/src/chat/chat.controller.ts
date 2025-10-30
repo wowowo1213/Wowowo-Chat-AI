@@ -1,30 +1,50 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
-import { ChatService } from './chat.service';
-import { ChatMessageDto } from './chat.dto';
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import type { Response } from 'express';
+import { ChatService } from './chat.service';
+
+interface Message {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+interface ChatRequest {
+  messages: Message[];
+  systemPrompt?: string;
+}
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('completion')
-  async chatCompletion(@Body() body: ChatMessageDto, @Res() res: Response) {
+  // localhost:3000/caht/stream-sse，使用post
+  @Post('stream-sse')
+  async streamChatSSE(@Body() body: ChatRequest, @Res() res: Response) {
+    const messages = body.messages;
     try {
-      const stream = await this.chatService.chatCompletion(body.chatMessage);
-
       res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('Access-Control-Allow-Origin', '*'); // 解决跨域，这个设置为*
 
-      stream.pipe(res);
+      res.status(HttpStatus.OK);
 
-      stream.on('end', () => {
-        res.end();
-      });
+      res.write('data: {"type": "start"}\n\n');
 
-      stream.on('error', (err) => {
-        res.status(500).json({ error: err.message });
-      });
+      for await (const chunk of this.chatService.streamChat(messages)) {
+        const data = JSON.stringify({ type: 'chunk', content: chunk });
+        res.write(`data: ${data}\n\n`);
+      }
+
+      res.write('data: {"type": "end"}\n\n');
+      res.end();
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const errorData = JSON.stringify({
+        type: 'error',
+        error: '服务器内部错误',
+        message: error.message,
+      });
+      res.write(`data: ${errorData}\n\n`);
+      res.end();
     }
   }
 }
