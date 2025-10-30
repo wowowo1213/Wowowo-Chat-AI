@@ -1,21 +1,22 @@
 <template>
-  <div class="space-y-4 px-40 h-[750px] w-full overflow-y-auto">
-    <!-- 这边高度有问题，当输入框变高时，整个界面会整体上移，而app中设置了overhidden所以会不好看 -->
+  <div class="flex-1 overflow-y-auto">
     <DynamicScroller
+      class="h-full w-full"
       :items="messages"
       :min-item-size="100"
       :key="chatStore.curname"
       key-field="_key"
     >
-      <!-- _key好像还得修改一下 -->
-      <template #default="{ item, index }">
-        <DynamicScrollerItem :item="item" :data-index="index">
-          <div :class="item.role === 'user' ? 'flex justify-end' : ''">
+      <template #default="{ item, index, active }">
+        <DynamicScrollerItem :item="item" :active="active" :data-index="index">
+          <div :class="item.role === 'user' ? 'flex justify-end pr-35 pb-6' : 'pl-40 pr-35 pb-6'">
             <div
-              v-if="item.role === 'user'"
-              class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg p-4 transition-all duration-200 max-w-[60%]"
+              v-if="item.role === 'user' && item.content"
+              class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[60%]"
             >
-              {{ item.content }}
+              <p>
+                {{ item.content }}
+              </p>
 
               <div v-if="isFile" class="mt-4 inline-flex space-x-5 rounded-lg flex">
                 <div class="flex items-center space-x-3 rounded-lg cursor-pointer inline-flex">
@@ -44,11 +45,16 @@
             </div>
 
             <div
-              v-if="item.role !== 'user'"
-              class="bg-blue-50 dark:text-white dark:bg-gray-800 rounded-lg p-4 transition-all duration-200"
+              v-else
+              class="bg-blue-50 dark:text-white dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200"
             >
-              {{ item.content }}
-              <p class="mt-3 text-gray-600 dark:text-gray-400">回答来自 通义千问-plus 大模型</p>
+              <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4">
+                回答来自 通义千问-plus 大模型
+              </p>
+              <p v-if="item.content" class="mb-3">
+                {{ item.content }}
+              </p>
+              <p v-else class="mb-3">网络出错啦，芙宁娜暂时无法回答您的问题🌹</p>
             </div>
           </div>
         </DynamicScrollerItem>

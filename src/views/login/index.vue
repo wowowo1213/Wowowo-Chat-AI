@@ -27,7 +27,7 @@
           v-model="email"
         />
         <button
-          class="w-full p-2 rounded-lg font-medium cursor-pointer bg-blue-300 hover:bg-blue-500 dark:bg-gray-600 dark:hover:bg-amber-500 dark:text-gray-200 transition-all duration-200"
+          class="w-full p-2 rounded-lg font-medium cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 dark:text-gray-200 transition-all duration-200"
           @click="handleLogin"
         >
           {{ loading ? 'Logging in..' : 'Start' }}

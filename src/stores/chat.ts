@@ -143,13 +143,15 @@ export const useChatStore = defineStore('chat', {
 
     chatPushMessage(msg: Message) {
       const key = this.curname;
-      const message: Message = {
-        role: msg.role,
-        content: msg.content,
-        attachments: msg.attachments || [],
-      };
-      this.session[key]?.push(message);
-      this.time[key] = Date.now();
+      if (msg.content) {
+        const message: Message = {
+          role: msg.role,
+          content: msg.content,
+          attachments: msg.attachments || [],
+        };
+        this.session[key]?.push(message);
+        this.time[key] = Date.now();
+      }
     },
 
     getCurrentMessages() {
@@ -158,15 +160,8 @@ export const useChatStore = defineStore('chat', {
       return currentMessages.map((item, index) => ({
         ...item,
         attachments: Array.isArray(item.attachments) ? item.attachments : [],
-        _key: `${item.role}-${index}`, // _key用来进行虚拟列表的渲染
+        _key: `${item.role}-${index}`, // _key用来进行虚拟列表的渲染，同一个messages中必须唯一
       }));
-    },
-
-    clearMessages(chatName?: string) {
-      const name = chatName || this.curname;
-      if (this.session[name]) {
-        this.session[name] = [];
-      }
     },
 
     addDelta(delta: string) {

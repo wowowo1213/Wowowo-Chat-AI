@@ -6,7 +6,7 @@
       <ChatHome />
     </div>
 
-    <div class="flex-grow flex flex-col justify-between">
+    <div class="flex-grow flex flex-col h-screen overflow-hidden">
       <ChatHeader />
       <ChatMessage />
       <ChatInput />

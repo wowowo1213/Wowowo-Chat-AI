@@ -34,7 +34,7 @@
 
       <button
         @click="handleSubmit"
-        class="min-h-12 min-w-26 ml-4 px-4 py-2 h-11 rounded-lg cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-gray-700 dark:hover:bg-amber-500 transition-all duration-200"
+        class="min-h-12 min-w-26 ml-4 px-4 py-2 h-11 rounded-lg cursor-pointer text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-all duration-200"
       >
         点我发送
       </button>
@@ -54,6 +54,7 @@ const message = ref('');
 
 const handleKeydown = (event: KeyboardEvent) => {
   // 这边实现只有 shift + enter 时才会换行，单按 enter 会发送信息
+  // 也可以实现只有 shift + enter 时才会提问，单按 enter 会换行
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
     handleSubmit();
