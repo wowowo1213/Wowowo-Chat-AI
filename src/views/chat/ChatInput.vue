@@ -49,7 +49,6 @@ import { useChatStore } from '@/stores/chat';
 import type { Attachment } from '@/stores/chat';
 import { chatService } from '@/services/chat';
 import loadIcon from '@/assets/icon1.jpg';
-import { connect } from 'http2';
 
 const chatStore = useChatStore();
 

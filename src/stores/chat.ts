@@ -10,15 +10,16 @@ export interface Attachment {
   note?: string;
 }
 
-export interface Message {
+export interface ChatMessage {
+  // 使用ChatMessage命名主要是为了和element ui中的Message区别开
   role: string;
   content: string;
-  attachments?: Attachment[];
+  attachments?: Attachment[]; // 用于文件上传
   _key?: string; // 用于虚拟滚动唯一标识
 }
 
 interface ChatState {
-  session: Record<string, Message[]>;
+  session: Record<string, ChatMessage[]>;
   curname: string;
   time: Record<string, number>;
 }
@@ -108,9 +109,9 @@ export const useChatStore = defineStore('chat', {
       delete this.time[name];
     },
 
-    chatPushMessage(msg: Message) {
+    chatPushMessage(msg: ChatMessage) {
       const key = this.curname;
-      const message: Message = {
+      const message: ChatMessage = {
         role: msg.role,
         content: msg.content,
         attachments: msg.attachments || [],

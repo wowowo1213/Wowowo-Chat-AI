@@ -9,7 +9,8 @@
     >
       <template #default="{ item, index, active }">
         <DynamicScrollerItem :item="item" :active="active" :data-index="index">
-          <div :class="item.role === 'user' ? 'flex justify-end pr-35 pb-6' : 'pl-40 pr-35 pb-6'">
+          <!-- 这边内容过多之后，滚动条会显示，然后破坏padding的原有设定样式 -->
+          <div :class="item.role === 'user' ? 'flex justify-end pr-40 pb-6' : 'px-40 pb-6'">
             <div
               v-if="item.role === 'user'"
               class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[60%]"
@@ -45,14 +46,6 @@
               <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4">
                 回答来自 通义千问-plus 大模型
               </p>
-              <!-- <p v-if="item.content" class="mb-3 whitespace-pre-wrap">
-                <span v-for="(chunk, chunkIndex) in getMessageChunks(item)" :key="chunkIndex">
-                  {{ chunk }}
-                </span>
-                <span v-if="isStreaming && index === messages.length - 1" class="animate-pulse">
-                  ▌
-                </span>
-              </p> -->
               <p v-if="item.content" class="mb-3">
                 {{ item.content }}
               </p>
@@ -66,10 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { Attachment } from '@/stores/chat';
-import { chatService } from '@/services/chat';
 import pdfIcon from '@/assets/pdf.jpg';
 import docIcon from '@/assets/doc.jpg';
 import imageIcon from '@/assets/logo.jpg';

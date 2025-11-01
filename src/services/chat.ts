@@ -1,15 +1,16 @@
 import { useChatStore } from '@/stores/chat';
+import type { ChatMessage } from '@/stores/chat';
 
 export class ChatService {
   private controller: AbortController | null = null;
   private chatStore = useChatStore();
 
-  async connectToStream(chat: any[]) {
+  async connectToStream(chat: ChatMessage[]) {
     this.disconnect();
     this.controller = new AbortController();
 
     try {
-      const messages = chat.slice(-10); // 限制只能结合上下10条信息，包括ai的回复
+      const messages = chat.slice(-10); // 限制只能结合最后的上下10条信息回复，10条中包括ai的回复
       const response = await fetch('http://localhost:3000/chat/stream-sse', {
         method: 'POST',
         headers: {
@@ -37,7 +38,6 @@ export class ChatService {
             if (data.type === 'chunk') {
               this.chatStore.addDelta(data.content);
             } else if (data.type === 'end') {
-              console.log('Stream ended');
               this.disconnect();
             } else if (data.type === 'error') {
               console.error('Stream error:', data.error);
