@@ -129,7 +129,7 @@ const handleSubmit = async () => {
     if (!messages) return alert('当前对话为空'); // 感觉判断一下比较好
     await chatService.connectToStream(messages);
   } catch (err) {
-    console.log('流式对话前端提交处理', err);
+    console.log('ChatInput组件中流式对话前端提交处理出错', err);
   }
 
   message.value = '';
