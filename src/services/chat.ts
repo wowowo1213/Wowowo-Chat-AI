@@ -17,6 +17,7 @@ export class ChatService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ messages }), // 这边必须得用名字messages，不然后端内部会报错，获取不到post请求体中的messages
+        signal: this.controller.signal,
       });
 
       if (!response.ok) throw new Error('请求失败');

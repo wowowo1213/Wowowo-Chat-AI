@@ -34,10 +34,20 @@
       </div>
 
       <button
+        v-if="!isLoading"
         @click="handleSubmit"
         class="min-h-12 min-w-26 ml-4 px-4 py-2 h-11 rounded-lg cursor-pointer text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-all duration-200"
       >
         点我发送
+      </button>
+      <button
+        v-else
+        @click="handlePause"
+        @mouseenter="isHovered = true"
+        @mouseleave="isHovered = false"
+        class="min-h-12 min-w-26 ml-4 px-4 py-2 h-11 rounded-lg cursor-pointer text-white bg-gray-400 hover:bg-red-500 transition-all duration-200"
+      >
+        {{ isHovered ? '点我暂停' : '发送中...' }}
       </button>
     </div>
   </div>
@@ -67,23 +77,18 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 // 文件上传相关
 const fileInputRef = ref<HTMLInputElement | null>(null);
+const selectedFiles = ref<File[]>([]);
+const uploadFileType = '.pdf,.docx,.jpg,.png';
 
 const loadFile = () => {
-  if (fileInputRef.value) {
-    fileInputRef.value.click(); // 通过模拟点击input来达到点击图标然后实现上传
-  }
+  fileInputRef.value?.click(); // 通过模拟点击input来达到点击图标然后实现上传
 };
-
-const selectedFiles = ref<File[]>([]);
 
 const handleFileChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (input.files) {
-    selectedFiles.value = Array.from(input.files);
-  }
+  if (!input.files?.length) return;
+  selectedFiles.value = Array.from(input.files);
 };
-
-const uploadFileType = '.pdf,.docx,.jpg,.png';
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -95,12 +100,17 @@ const readFileAsText = (file: File): Promise<string> => {
 };
 
 // 消息处理相关
+const isLoading = ref(false);
+const isHovered = ref(false);
+
 const handleSubmit = async () => {
   const trimmedMessage = message.value.trim();
   if (!trimmedMessage) {
     alert('问题不能为空');
     return;
   }
+
+  isLoading.value = true;
 
   const userMessage = {
     role: 'user',
@@ -124,15 +134,21 @@ const handleSubmit = async () => {
 
   chatStore.chatPushMessage(userMessage);
 
+  message.value = '';
   try {
     const messages = chatStore.session[chatStore.curname] || [];
     if (!messages) return alert('当前对话为空'); // 感觉判断一下比较好
     await chatService.connectToStream(messages);
   } catch (err) {
     console.log('ChatInput组件中流式对话前端提交处理出错', err);
+  } finally {
+    isLoading.value = false;
   }
+};
 
-  message.value = '';
+const handlePause = () => {
+  chatService.disconnect();
+  isLoading.value = false;
 };
 </script>
 

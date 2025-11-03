@@ -1,51 +1,52 @@
 # Wowowo-Chat-AI
 
-**一个基于通义千问-Plus的简易AI聊天软件** 🚀
+**基于通义千问-Plus的全栈AI聊天应用** 🚀
 
 ---
 
 ## 项目简介
 
-Wowowo-Chat-AI 是一个 **全栈AI聊天应用**，采用 **TypeScript** 开发，前后端分离架构：
+Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天应用：
+
+### 技术栈
 
 - **前端**：Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Element Plus
-  - 响应式布局，左侧边栏支持动态隐藏
-  - 支持 **白天/黑夜主题切换**（本地持久化存储）
-  - 仿 **文心一言** 界面设计
-  - 流水式回答问题（通义千问 `stream: true` 模式）
-  - 支持 **上下文对话**（截取最近10条消息）
-  - 使用 `pinia-plugin-persistedstate` 实现状态持久化
-  - 使用 `vue-virtual-scroller` 优化长对话渲染性能
-
 - **后端**：Nest.js + TypeScript
-  - 集成 **通义千问-Plus（Qwen-Plus）** AI引擎
-  - 使用 **Redis**/**MongoDB** 存储聊天记录（本来想用的，但是后端不会数据库）
-  - 全局异常处理 + 统一响应拦截
+- **AI引擎**：通义千问-Plus（Qwen-Plus）
+- **数据库**：Redis（会话缓存）/ MongoDB（后端不会，所以弃置了）
 
 ---
 
-## 功能特性
+## 核心功能
 
-| 模块      | 功能描述                                                      |
-| --------- | ------------------------------------------------------------- |
-| **前端**  |                                                               |
-| ✅ 界面   | 仿文心一言设计，响应式布局（TailwindCSS + Flex）              |
-| ✅ 主题   | 白天/黑夜模式切换（0.2s过渡动画，本地存储）                   |
-| ✅ 交互   | 路由懒加载、Element Plus按需引入                              |
-| ✅ 回复   | **Markdown渲染** + 代码高亮 + 流式输出                        |
-| **后端**  |                                                               |
-| ✅ AI引擎 | 通义千问-Plus流式响应（`stream: true`）                       |
-| ✅ 数据   | Redis缓存会话 / MongoDB存储（本来想用的，但是后端不会数据库） |
-| ✅ 优化   | 全局异常处理 + 统一响应格式                                   |
+### 前端特性
+
+| 功能                | 描述                                             |
+| ------------------- | ------------------------------------------------ |
+| 🎨 **UI设计**       | 仿文心一言界面，响应式布局（TailwindCSS + Flex） |
+| 🌓 **主题切换**     | 白天/黑夜模式（0.2s过渡动画，本地持久化存储）    |
+| ⚡ **流式响应**     | 支持通义千问 `stream: true` 模式，实时显示回答   |
+| 📜 **上下文对话**   | 自动保留最近10条消息作为对话上下文               |
+| ⏸️ **交互控制**     | 回答过程中可点击红色按钮中断生成                 |
+| 💾 **状态持久化**   | 使用 `pinia-plugin-persistedstate` 保存历史记录  |
+| 📝 **Markdown渲染** | 通过 `markdown-it` 支持代码高亮和格式化显示      |
+| 🚀 **性能优化**     | 使用 `vue-virtual-scroller` 优化长对话渲染       |
+
+### 后端特性
+
+| 功能            | 描述                        |
+| --------------- | --------------------------- |
+| 🤖 **AI集成**   | 接入通义千问-Plus流式API    |
+| 🛡️ **异常处理** | 全局异常拦截 + 统一响应格式 |
 
 ---
 
-## 待优化点
+## 待优化清单
 
-1. **视口跳转**：新消息自动滚动到可视区域
-2. **滚动条样式**：黑夜模式滚动条颜色适配
-3. **历史记录**：优化从主页跳转到历史记录的逻辑
-4. **UI细节**：上传文件按钮样式优化
+1. ✅ **视口控制**：新消息自动滚动到可视区域
+2. 🌙 **滚动条样式**：适配黑夜模式的滚动条颜色
+3. 📂 **历史记录**：优化主页到历史记录的跳转逻辑
+4. 📁 **文件上传**：美化上传按钮样式
 
 ---
 
@@ -63,6 +64,7 @@ Wowowo-Chat-AI 是一个 **全栈AI聊天应用**，采用 **TypeScript** 开发
 git clone https://github.com/Wowowo-Chat-AI.git
 
 # 选择仓库
+cd Wowowo-Chat-AI
 cd wowowo-chat-api
 
 # 安装依赖
@@ -86,4 +88,42 @@ npm install
 
 # 启动服务
 npm run dev
+```
+
+## Wowowo-Chat-AI 项目结构
+
+```bash
+wowowo-chat-ai/
+├── src/
+│   ├── assets/               # 静态资源(图片等)
+│   ├── components/           # 通用组件
+│   │   ├── ThemeButton.vue   # 主题切换按钮
+│   ├── services/
+│   │   ├── chat.ts           # 向后端发起请求并处理数据
+│   ├── stores/               # Pinia 状态管理
+│   │   ├── chat.ts           # 聊天状态（含持久化）
+│   │   └── user.ts           # 用户信息
+│   ├── views/                # 页面
+│   │   ├── chat.vue          # 聊天界面
+│   │   └── login.vue         # 登陆界面
+│   ├── App.vue               # 根组件
+│   ├── main.ts               # 入口文件
+│
+├── wowowo-chat-api/                    # 后端源码（NestJS）
+│   ├── src/                            # 源码目录
+│   │   ├── chat/                       # 聊天功能模块
+│   │   │   ├── chat.controller.ts      # 聊天控制器
+│   │   │   ├── chat.service.ts         # 聊天服务器
+│   │   │   └── chat.module.ts          # 聊天模块模块注册与依赖注入
+│   │   ├── userinfo/                   # 用户信息功能模块
+│   │   │   ├── userinfo.controller.ts  # 用户信息控制器
+│   │   │   ├── userinfo.dto.ts         # 用户信息格式定义
+│   │   │   ├── userinfo.service.ts     # 用户信息服务器
+│   │   │   └── iserinfo.module.ts      # 用户信息模块注册与依赖注入
+│   │   ├── app.module.ts               # 根模块
+│   │   └── main.ts                     # 后端入口
+│   ├── .env                            # 环境变量配置
+│   └── package.json                    # 后端依赖
+│
+└── README.md                           # 项目说明
 ```

@@ -28,7 +28,7 @@
                 >
                   <img :src="getFileIcon(attachment.type)" alt="文件图标" class="w-8 h-8" />
                   <div class="flex flex-col">
-                    <span class="text-sm text-gray-700 dark:text-gray-300">
+                    <span class="text-sm text-gray-800 dark:text-gray-300">
                       {{ attachment.name }}
                     </span>
                     <span class="text-xs text-gray-500 dark:text-gray-400">
@@ -41,14 +41,12 @@
 
             <div
               v-else
-              class="bg-blue-50 dark:text-white dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200"
+              class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-4 px-6 transition-all duration-200"
             >
               <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4">
                 回答来自 通义千问-plus 大模型
               </p>
-              <p v-if="item.content" class="mb-3">
-                {{ item.content }}
-              </p>
+              <p v-if="item.content" class="mb-3" v-html="renderMarkdown(item.content)"></p>
               <p v-else class="mb-3">网络出错啦，芙宁娜暂时无法回答您的问题🌹</p>
             </div>
           </div>
@@ -66,6 +64,7 @@ import pdfIcon from '@/assets/pdf.jpg';
 import docIcon from '@/assets/doc.jpg';
 import imageIcon from '@/assets/logo.jpg';
 import defaultIcon from '@/assets/default.jpg';
+import MarkdownIt from 'markdown-it';
 
 const chatStore = useChatStore();
 const messages = computed(() => chatStore.getCurrentMessages());
@@ -95,5 +94,21 @@ const describeAttachment = (attachment?: Attachment): string => {
   const bodyText = body ? `内容预览:\n${body.slice(0, 4000)}` : note || '未提供内容';
 
   return `${header.join(' | ')}\n${bodyText}`;
+};
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  breaks: true,
+  typographer: true,
+  highlight: (str: string, lang: string) => {
+    return `
+      <pre class="bg-white/50 dark:bg-gray-400/50 text-black dark:text-gray-200 p-4 rounded-lg overflow-x-auto"><code class="language-${lang}">${str}</code></pre>
+    `;
+  },
+});
+
+const renderMarkdown = (text: string) => {
+  return md.render(text);
 };
 </script>
