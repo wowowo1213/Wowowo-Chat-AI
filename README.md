@@ -13,7 +13,7 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 - **前端**：Vue3 + Vite + TypeScript + TailwindCSS + Pinia + Vue-Router + Element Plus
 - **后端**：Nest.js + TypeScript
 - **AI引擎**：通义千问-Plus（Qwen-Plus）
-- **数据库**：Redis（会话缓存）/ MongoDB（后端不会，所以弃置了）
+- **数据库**：Redis、MongoDB（后端不会，所以弃置了）
 
 ---
 
@@ -21,16 +21,16 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 ### 前端特性
 
-| 功能                | 描述                                             |
-| ------------------- | ------------------------------------------------ |
-| 🎨 **UI设计**       | 仿文心一言界面，响应式布局（TailwindCSS + Flex） |
-| 🌓 **主题切换**     | 白天/黑夜模式（0.2s过渡动画，本地持久化存储）    |
-| ⚡ **流式响应**     | 支持通义千问 `stream: true` 模式，实时显示回答   |
-| 📜 **上下文对话**   | 自动保留最近10条消息作为对话上下文               |
-| ⏸️ **交互控制**     | 回答过程中可点击红色按钮中断生成                 |
-| 💾 **状态持久化**   | 使用 `pinia-plugin-persistedstate` 保存历史记录  |
-| 📝 **Markdown渲染** | 通过 `markdown-it` 支持代码高亮和格式化显示      |
-| 🚀 **性能优化**     | 使用 `vue-virtual-scroller` 优化长对话渲染       |
+| 功能                 | 描述                                                                              |
+| -------------------- | --------------------------------------------------------------------------------- |
+| 🎨 **UI 设计**       | 仿文心一言界面，响应式布局（TailwindCSS + Flex）                                  |
+| 🌓 **主题切换**      | 白天/黑夜模式（0.2s 过渡动画，本地持久化存储）                                    |
+| ⚡ **流式响应**      | 支持通义千问 `stream: true` 模式，实时显示回答                                    |
+| 📜 **上下文对话**    | 自动保留最近 10 条消息作为对话上下文                                              |
+| ⏸️ **交互控制**      | 回答过程中悬停“发送中”按钮可变成红色按钮，点击中断生成                            |
+| 💾 **状态持久化**    | 使用 `pinia-plugin-persistedstate` 保存历史记录，按更新时间降序排序，支持高亮选中 |
+| 📝 **Markdown 渲染** | 通过 `markdown-it` 支持代码高亮和格式化显示                                       |
+| 🚀 **性能优化**      | 使用 `vue-virtual-scroller` 优化长对话渲染                                        |
 
 ### 后端特性
 
@@ -45,8 +45,9 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 1. ✅ **视口控制**：新消息自动滚动到可视区域
 2. 🌙 **滚动条样式**：适配黑夜模式的滚动条颜色
-3. 📂 **历史记录**：优化主页到历史记录的跳转逻辑
+3. 📂 **主页跳转**：优化主页到历史记录的跳转逻辑
 4. 📁 **文件上传**：美化上传按钮样式
+5. 🎤 **录音优化**: 实现可录音
 
 ---
 
@@ -95,31 +96,31 @@ npm run dev
 ```bash
 wowowo-chat-ai/
 ├── src/
-│   ├── assets/               # 静态资源(图片等)
-│   ├── components/           # 通用组件
-│   │   ├── ThemeButton.vue   # 主题切换按钮
+│   ├── assets/                         # 静态资源(图片等)
+│   ├── components/                     # 通用组件
+│   │   ├── ThemeButton.vue             # 主题切换按钮
 │   ├── services/
-│   │   ├── chat.ts           # 向后端发起请求并处理数据
-│   ├── stores/               # Pinia 状态管理
-│   │   ├── chat.ts           # 聊天状态（含持久化）
-│   │   └── user.ts           # 用户信息
-│   ├── views/                # 页面
-│   │   ├── chat.vue          # 聊天界面
-│   │   └── login.vue         # 登陆界面
-│   ├── App.vue               # 根组件
-│   ├── main.ts               # 入口文件
+│   │   ├── chat.ts                     # 向后端发起请求并处理数据
+│   ├── stores/                         # Pinia 状态管理
+│   │   ├── chat.ts                     # 聊天状态（含持久化）
+│   │   └── user.ts                     # 用户信息
+│   ├── views/                          # 页面
+│   │   ├── chat                        # 聊天界面
+│   │   └── login                       # 登陆界面
+│   ├── App.vue                         # 根组件
+│   ├── main.ts                         # 入口文件
 │
 ├── wowowo-chat-api/                    # 后端源码（NestJS）
 │   ├── src/                            # 源码目录
 │   │   ├── chat/                       # 聊天功能模块
 │   │   │   ├── chat.controller.ts      # 聊天控制器
-│   │   │   ├── chat.service.ts         # 聊天服务器
+│   │   │   ├── chat.service.ts         # 聊天服务
 │   │   │   └── chat.module.ts          # 聊天模块模块注册与依赖注入
 │   │   ├── userinfo/                   # 用户信息功能模块
 │   │   │   ├── userinfo.controller.ts  # 用户信息控制器
-│   │   │   ├── userinfo.dto.ts         # 用户信息格式定义
-│   │   │   ├── userinfo.service.ts     # 用户信息服务器
-│   │   │   └── iserinfo.module.ts      # 用户信息模块注册与依赖注入
+│   │   │   ├── userinfo.dto.ts         # 数据传输对象
+│   │   │   ├── userinfo.service.ts     # 用户服务
+│   │   │   └── uiserinfo.module.ts     # 用户信息模块注册与依赖注入
 │   │   ├── app.module.ts               # 根模块
 │   │   └── main.ts                     # 后端入口
 │   ├── .env                            # 环境变量配置

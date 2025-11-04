@@ -4,31 +4,48 @@
       对话历史记录
     </h2>
     <div
-      v-for="item in conversationList"
-      :key="item.id"
-      class="px-4 py-2 w-full rounded-xl cursor-pointer text-lg text-black bg-gray-100 hover:bg-gray-200 dark:text-white dark:bg-gray-900 dark:hover:bg-gray-700 transition-all duration-200"
-      @click="handleConversationClick(item)"
+      v-for="(item, index) in chatStore.getAllChats()"
+      :key="index"
+      class="px-4 py-2 w-full rounded-xl cursor-pointer text-lg transition-all duration-200"
+      :class="{
+        // 这个用来实现选中时一直高亮
+        'bg-gray-200 dark:bg-gray-700 text-black dark:text-white': chatStore.curname === item,
+        'bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300':
+          chatStore.curname !== item,
+      }"
+      @click="chatStore.selectChat(item)"
     >
-      {{ item.title }}
+      <div class="flex justify-between items-center">
+        <span class="flex-1">{{ item }}</span>
+        <span class="text-sm ml-4">
+          {{ formatTime(chatStore.getTime(item)) }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useChatStore } from '@/stores/chat';
 
-const conversationList = ref([
-  { title: '你好', id: 1 },
-  { title: 'hello，world', id: 2 },
-]);
+const chatStore = useChatStore();
 
-interface Conversation {
-  id?: string | number;
-  title: string;
-}
+const formatTime = (timestamp: number) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now.getTime() - timestamp;
 
-const handleConversationClick = (item: Conversation) => {
-  // 这边进行跳转，每一个都对应不同的请求资源路径
-  console.log(333);
+  // 如果是今天的消息(getDate相同表示日期相同)，显示时间
+  if (diff < 24 * 60 * 60 * 1000 && date.getDate() === now.getDate()) {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  return date.toLocaleDateString([], {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 </script>

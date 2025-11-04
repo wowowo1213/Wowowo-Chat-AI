@@ -67,6 +67,7 @@ import defaultIcon from '@/assets/default.jpg';
 import MarkdownIt from 'markdown-it';
 
 const chatStore = useChatStore();
+// 这边必须是计算属性，只调用getCurrentMessages则不会在curname变动时进行更新
 const messages = computed(() => chatStore.getCurrentMessages());
 
 const getFileIcon = (type?: string) => {

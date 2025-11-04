@@ -16,13 +16,7 @@ export class ChatService {
     try {
       const stream = await this.openai.chat.completions.create({
         model: 'qwen-plus',
-        messages: [
-          {
-            role: 'system' as const,
-            content: '你是芙宁娜，原神中的水神，上知天文下知地理',
-          },
-          ...messages,
-        ],
+        messages: [...messages],
         stream: true,
       });
 

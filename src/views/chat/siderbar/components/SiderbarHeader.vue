@@ -10,7 +10,7 @@
     <div class="mt-4 w-full flex justify-center">
       <button
         class="px-4 py-2 rounded-lg cursor-pointer text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-colors duration-200"
-        @click="createNewDialog"
+        @click="chatStore.generateNewChat(chatStore.getNewDefaultChatName())"
       >
         新建对话
       </button>
@@ -20,8 +20,7 @@
 
 <script setup lang="ts">
 import logoImg from '@/assets/logo.jpg';
+import { useChatStore } from '@/stores/chat';
 
-const createNewDialog = () => {
-  console.log(222);
-};
+const chatStore = useChatStore();
 </script>

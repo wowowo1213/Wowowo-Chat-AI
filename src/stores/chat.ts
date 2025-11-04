@@ -32,15 +32,21 @@ export const useChatStore = defineStore('chat', {
       time: {}, // 用来保存每个对话chat最近一次的更新的时间
     };
   },
+
   actions: {
-    clearSession() {
+    clearChatStore() {
       this.session = {};
       this.curname = DEFAULT_CHAT_NAME;
       this.time = {};
     },
 
     getAllChats() {
-      return Object.keys(this.session);
+      // 按照最新更新时间排序
+      return Object.keys(this.session).sort((a, b) => this.time[b]! - this.time[a]!);
+    },
+
+    getTime(name: string): number {
+      return this.time[name] || 0;
     },
 
     getNewDefaultChatName() {
