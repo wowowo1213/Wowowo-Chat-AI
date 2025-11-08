@@ -14,6 +14,7 @@ declare module 'vue' {
     ChatComponent: typeof import('./src/components/ChatComponent.vue')['default']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    RegisterModal: typeof import('./src/components/RegisterModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThemeButton: typeof import('./src/components/ThemeButton.vue')['default']
