@@ -127,6 +127,8 @@ wowowo-chat-ai/
 │   ├── App.vue                         # 根组件
 │   └── main.ts                         # 入口文件
 │
+├── .env                                # 前端环境变量配置
+│
 ├── wowowo-chat-api/                    # 后端源码（NestJS）
 │   ├── src/                            # 源码目录
 │   │   ├── chat/                       # 聊天功能模块
@@ -140,7 +142,7 @@ wowowo-chat-ai/
 │   │   │   └── uiserinfo.module.ts     # 用户信息模块注册与依赖注入
 │   │   ├── app.module.ts               # 根模块
 │   │   └── main.ts                     # 后端入口
-│   ├── .env                            # 环境变量配置
+│   ├── .env                            # 后端环境变量配置
 │   └── package.json                    # 后端依赖
 │
 └── README.md                           # 项目说明
