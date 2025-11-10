@@ -6,7 +6,7 @@ import { UserinfoService } from './userinfo.service';
 export class UserinfoController {
   constructor(private readonly userinfoService: UserinfoService) {}
 
-  // localhost:3000/userinfo/register，使用post
+  // localhost:5000/userinfo/register，使用post
   @Post('register')
   async registerUser(@Body() registerDto: RegisterUserDto) {
     try {
@@ -24,7 +24,7 @@ export class UserinfoController {
     }
   }
 
-  // localhost:3000/userinfo/login，使用post
+  // localhost:5000/userinfo/login，使用post
   @Post('login')
   async loginUser(@Body() loginDto: LoginUserDto) {
     try {

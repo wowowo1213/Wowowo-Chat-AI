@@ -74,7 +74,8 @@ npm install
 # 配置环境变量
 # .env文件
 # 修改以下字段：
-# DASHSCOPE_API_KEY=你的通义千问API Key
+# PORT = 5000
+# DASHSCOPE_API_KEY = 你的通义千问API Key
 
 # 启动服务(二选一)
 npm run start:dev  # 开发模式（热更新）
@@ -86,6 +87,12 @@ npm run start      # 生产模式
 ```bash
 # 安装依赖
 npm install
+
+# 配置环境变量
+# .env文件
+# 修改以下字段：
+# VITE_API_URL = http://localhost:5000
+# 上面这边主要是为了和后端的本地运行端口保持一致，可自行修改
 
 # 启动服务
 npm run dev

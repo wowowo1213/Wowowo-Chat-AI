@@ -16,7 +16,7 @@ interface ChatRequest {
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  // localhost:3000/chat/stream-sse，使用post
+  // localhost:5000/chat/stream-sse，使用post
   @Post('stream-sse')
   async streamChatSSE(@Body() body: ChatRequest, @Res() res: Response) {
     // 这边的messages得为一个JSON字符串，里面格式为：

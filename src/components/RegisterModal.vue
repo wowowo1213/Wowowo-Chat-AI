@@ -1,10 +1,11 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div v-if="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
       <h2 class="text-xl font-semibold mb-4 dark:text-gray-200">注册账号</h2>
 
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="handleRegister">
         <input
+          :disabled="loading"
           type="text"
           class="w-full p-2 mb-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
           placeholder="手机号"
@@ -12,6 +13,7 @@
         />
 
         <input
+          :disabled="loading"
           type="password"
           class="w-full p-2 mb-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
           placeholder="密码"
@@ -19,6 +21,7 @@
         />
 
         <input
+          :disabled="loading"
           type="password"
           class="w-full p-2 mb-4 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
           placeholder="确认密码"
@@ -33,6 +36,7 @@
           >
             取消
           </button>
+
           <button
             type="submit"
             :disabled="loading"
@@ -65,8 +69,8 @@ const loading = ref(false);
 const error = ref('');
 
 const close = () => {
-  emit('close');
   resetForm();
+  emit('close');
 };
 
 const resetForm = () => {
@@ -74,15 +78,20 @@ const resetForm = () => {
   password.value = '';
   confirmPassword.value = '';
   error.value = '';
+  loading.value = false;
 };
 
-const handleSubmit = async () => {
-  if (!phoneNumber.value.trim() || !password.value.trim() || !confirmPassword.value.trim()) {
-    error.value = '请填写所有字段';
+const handleRegister = async () => {
+  if (!phoneNumber.value.trim()) {
+    error.value = '请输入手机号';
     return;
-  }
-
-  if (password.value !== confirmPassword.value) {
+  } else if (!password.value.trim()) {
+    error.value = '请输入密码';
+    return;
+  } else if (!confirmPassword.value.trim()) {
+    error.value = '请输入确认密码';
+    return;
+  } else if (password.value !== confirmPassword.value) {
     error.value = '两次输入的密码不一致';
     return;
   }
@@ -101,9 +110,9 @@ const handleSubmit = async () => {
     close();
   } catch (err: any) {
     if (Array.isArray(err.response?.data?.message)) {
-      error.value = err.response?.data?.message[0] || '登录失败';
+      error.value = err.response?.data?.message[0] || '注册失败';
     } else {
-      error.value = err.response?.data?.message || '登录失败';
+      error.value = err.response?.data?.message || '注册失败';
     }
   } finally {
     loading.value = false;

@@ -27,20 +27,22 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full p-2 rounded-lg font-medium bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 text-white disabled:opacity-50"
+            class="w-full p-2 rounded-lg font-medium cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 text-white disabled:opacity-50"
           >
             {{ loading ? '登录中...' : '登录' }}
           </button>
         </form>
 
-        <p v-if="error" class="text-red-500 mt-2 text-center">{{ error }}</p>
+        <p v-if="error" class="text-red-500 dark:text-red-700 mt-2 text-center">{{ error }}</p>
 
-        <p v-if="isRegister" class="text-blue-500 mt-2 text-center">注册成功，请登录</p>
+        <p v-if="isRegister" class="text-gray-600 dark:text-gray-300 mt-2 text-center">
+          注册成功，请登录
+        </p>
 
         <div class="mt-4 text-center">
           <button
             @click="showRegisterModal = true"
-            class="text-blue-600 dark:text-blue-400 hover:underline"
+            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline"
           >
             没有账号？立即注册
           </button>
@@ -73,6 +75,8 @@ const showRegisterModal = ref(false);
 const isRegister = ref(false);
 
 const handleLogin = async () => {
+  isRegister.value = false;
+
   if (!phoneNumber.value.trim() || !password.value.trim()) {
     error.value = '手机号和密码不能为空';
     return;
@@ -102,7 +106,9 @@ const handleLogin = async () => {
 };
 
 const handleRegisterSuccess = () => {
-  isRegister.value = true;
   phoneNumber.value = '';
+  password.value = '';
+  isRegister.value = true;
+  error.value = '';
 };
 </script>

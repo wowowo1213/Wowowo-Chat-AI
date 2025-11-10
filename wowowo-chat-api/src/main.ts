@@ -19,7 +19,7 @@ async function bootstrap() {
 
   // 到这边解决跨域
   app.enableCors({
-    origin: '*', // 允许所有来源
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type',
   });
