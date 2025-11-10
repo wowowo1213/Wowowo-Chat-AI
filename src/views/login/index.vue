@@ -17,12 +17,26 @@
             v-model="phoneNumber"
           />
 
-          <input
-            type="password"
-            class="w-full p-2 mb-4 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
-            placeholder="密码"
-            v-model="password"
-          />
+          <div class="relative">
+            <input
+              :type="showPassword ? 'text' : 'password'"
+              class="w-full p-2 mb-4 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+              placeholder="密码"
+              v-model="password"
+            />
+
+            <button
+              type="button"
+              @click="togglePasswordVisibility"
+              class="absolute right-3 top-2.5 text-gray-500 dark:text-gray-400"
+            >
+              <img
+                :src="showPassword ? eyeOpen : eyeClose"
+                alt="toggle password"
+                class="w-5 h-5 rounded-full"
+              />
+            </button>
+          </div>
 
           <button
             type="submit"
@@ -65,14 +79,21 @@ import axios from 'axios';
 import ThemeButton from '@/components/ThemeButton.vue';
 import RegisterModal from '@/components/RegisterModal.vue';
 import logoImg from '@/assets/logo.jpg';
+import eyeOpen from '@/assets/eye-open.png';
+import eyeClose from '@/assets/eye-close.png';
 
 const router = useRouter();
 const phoneNumber = ref('');
 const password = ref('');
+const showPassword = ref(false);
 const loading = ref(false);
 const error = ref('');
 const showRegisterModal = ref(false);
 const isRegister = ref(false);
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 
 const handleLogin = async () => {
   isRegister.value = false;
@@ -112,3 +133,18 @@ const handleRegisterSuccess = () => {
   error.value = '';
 };
 </script>
+
+<style scoped>
+/* 隐藏原生密码图标 */
+:deep(input[type='password']),
+:deep(input[type='text']) {
+  &::-webkit-contacts-auto-fill-button,
+  &::-webkit-credentials-auto-fill-button {
+    display: none;
+  }
+
+  &::-ms-reveal {
+    display: none;
+  }
+}
+</style>

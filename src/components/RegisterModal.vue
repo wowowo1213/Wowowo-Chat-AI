@@ -12,21 +12,51 @@
           v-model="phoneNumber"
         />
 
-        <input
-          :disabled="loading"
-          type="password"
-          class="w-full p-2 mb-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
-          placeholder="密码"
-          v-model="password"
-        />
+        <div class="relative mb-2">
+          <input
+            :disabled="loading"
+            :type="showPassword ? 'text' : 'password'"
+            autocomplete="new-password"
+            class="w-full p-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+            placeholder="密码"
+            v-model="password"
+          />
 
-        <input
-          :disabled="loading"
-          type="password"
-          class="w-full p-2 mb-4 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
-          placeholder="确认密码"
-          v-model="confirmPassword"
-        />
+          <button
+            type="button"
+            @click="showPassword = !showPassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+          >
+            <img
+              :src="showPassword ? eyeOpen : eyeClose"
+              alt="toggle password visibility"
+              class="w-5 h-5"
+            />
+          </button>
+        </div>
+
+        <div class="relative mb-4">
+          <input
+            :disabled="loading"
+            :type="showPassword ? 'text' : 'password'"
+            autocomplete="new-password"
+            class="w-full p-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+            placeholder="确认密码"
+            v-model="confirmPassword"
+          />
+
+          <button
+            type="button"
+            @click="showPassword = !showPassword"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+          >
+            <img
+              :src="showPassword ? eyeOpen : eyeClose"
+              alt="toggle password visibility"
+              class="w-5 h-5"
+            />
+          </button>
+        </div>
 
         <div class="flex justify-end space-x-2">
           <button
@@ -55,6 +85,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios';
+import eyeOpen from '@/assets/eye-open.png';
+import eyeClose from '@/assets/eye-close.png';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -67,6 +99,7 @@ const password = ref('');
 const confirmPassword = ref('');
 const loading = ref(false);
 const error = ref('');
+const showPassword = ref(false);
 
 const close = () => {
   resetForm();
@@ -79,6 +112,7 @@ const resetForm = () => {
   confirmPassword.value = '';
   error.value = '';
   loading.value = false;
+  showPassword.value = false;
 };
 
 const handleRegister = async () => {
@@ -119,3 +153,18 @@ const handleRegister = async () => {
   }
 };
 </script>
+
+<style scoped>
+/* 隐藏原生密码图标 */
+:deep(input[type='password']),
+:deep(input[type='text']) {
+  &::-webkit-contacts-auto-fill-button,
+  &::-webkit-credentials-auto-fill-button {
+    display: none;
+  }
+
+  &::-ms-reveal {
+    display: none;
+  }
+}
+</style>

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import SiderbarHeader from './components/SiderbarHeader.vue';
-import ChatHistory from './components/ChatHistory.vue';
-import UserInfo from './components/UserInfo.vue';
+import SiderbarHeader from './SiderbarHeader.vue';
+import ChatHistory from './ChatHistory.vue';
+import UserInfo from './UserInfo.vue';
 </script>
