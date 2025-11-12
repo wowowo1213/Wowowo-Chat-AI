@@ -57,31 +57,29 @@
 import { ref } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { Attachment } from '@/stores/chat';
-import { chatService } from '@/services/chat';
+import { chatService } from '@/services/chatService';
 import loadIcon from '@/assets/icon1.jpg';
 
 const chatStore = useChatStore();
-
-// 输入框相关
 const message = ref('');
 
-const handleKeydown = (event: KeyboardEvent) => {
+const handleKeydown = (event: Event) => {
   // 这边实现只有 shift + enter 时才会换行，单按 enter 会发送信息
   // 也可以实现只有 shift + enter 时才会提问，单按 enter 会换行
-  if (event.key === 'Enter' && !event.shiftKey) {
+  const keyboardEvent = event as KeyboardEvent;
+  if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
     event.preventDefault();
     handleSubmit();
     message.value = '';
   }
 };
 
-// 文件上传相关
 const fileInputRef = ref<HTMLInputElement | null>(null);
 const selectedFiles = ref<File[]>([]);
 const uploadFileType = '.pdf,.docx,.jpg,.png';
 
 const loadFile = () => {
-  fileInputRef.value?.click(); // 通过模拟点击input来达到点击图标然后实现上传
+  fileInputRef.value?.click();
 };
 
 const handleFileChange = (event: Event) => {
@@ -99,7 +97,6 @@ const readFileAsText = (file: File): Promise<string> => {
   });
 };
 
-// 消息处理相关
 const isLoading = ref(false);
 const isHovered = ref(false);
 
@@ -127,7 +124,7 @@ const handleSubmit = async () => {
           type: file.type,
           body: await readFileAsText(file),
         };
-      }),
+      })
     );
     selectedFiles.value = [];
   }
@@ -137,7 +134,7 @@ const handleSubmit = async () => {
   message.value = '';
   try {
     const messages = chatStore.session[chatStore.curname] || [];
-    if (!messages) return alert('当前对话为空'); // 感觉判断一下比较好
+    if (!messages) return alert('当前对话为空');
     await chatService.connectToStream(messages);
   } catch (err) {
     console.log('ChatInput组件中流式对话前端提交处理出错', err);

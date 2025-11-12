@@ -7,7 +7,7 @@
         <input
           :disabled="loading"
           type="text"
-          class="w-full p-2 mb-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
+          class="w-full p-2 mb-2 rounded-lg border text-gray-900 bg-white dark:text-white dark:bg-gray-700 border-black-300 dark:border-gray-400 pr-10 focus:border-black-400 dark:focus:border-gray-300 focus:ring-1 focus:ring-black-400 dark:focus:ring-gray-300 focus:outline-none"
           placeholder="手机号"
           v-model="phoneNumber"
         />
@@ -17,7 +17,7 @@
             :disabled="loading"
             :type="showPassword ? 'text' : 'password'"
             autocomplete="new-password"
-            class="w-full p-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+            class="w-full p-2 rounded-lg border text-gray-900 bg-white dark:text-white dark:bg-gray-700 border-black-300 dark:border-gray-400 pr-10 focus:border-black-400 dark:focus:border-gray-300 focus:ring-1 focus:ring-black-400 dark:focus:ring-gray-300 focus:outline-none"
             placeholder="密码"
             v-model="password"
           />
@@ -25,7 +25,7 @@
           <button
             type="button"
             @click="showPassword = !showPassword"
-            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white"
           >
             <el-icon :size="20" v-if="showPassword"><View /></el-icon>
             <el-icon :size="20" v-else><Hide /></el-icon>
@@ -35,19 +35,19 @@
         <div class="relative mb-4">
           <input
             :disabled="loading"
-            :type="showPassword ? 'text' : 'password'"
+            :type="showConfirmPassword ? 'text' : 'password'"
             autocomplete="new-password"
-            class="w-full p-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+            class="w-full p-2 rounded-lg border text-gray-900 bg-white dark:text-white dark:bg-gray-700 border-black-300 dark:border-gray-400 pr-10 focus:border-black-400 dark:focus:border-gray-300 focus:ring-1 focus:ring-black-400 dark:focus:ring-gray-300 focus:outline-none"
             placeholder="确认密码"
             v-model="confirmPassword"
           />
 
           <button
             type="button"
-            @click="showPassword = !showPassword"
-            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+            @click="showConfirmPassword = !showConfirmPassword"
+            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-white"
           >
-            <el-icon :size="20" v-if="showPassword"><View /></el-icon>
+            <el-icon :size="20" v-if="showConfirmPassword"><View /></el-icon>
             <el-icon :size="20" v-else><Hide /></el-icon>
           </button>
         </div>
@@ -56,7 +56,7 @@
           <button
             type="button"
             @click="close"
-            class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+            class="cursor-pointer px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
           >
             取消
           </button>
@@ -92,6 +92,7 @@ const confirmPassword = ref('');
 const loading = ref(false);
 const error = ref('');
 const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
 const close = () => {
   resetForm();
@@ -105,6 +106,7 @@ const resetForm = () => {
   error.value = '';
   loading.value = false;
   showPassword.value = false;
+  showConfirmPassword.value = false;
 };
 
 const handleRegister = async () => {

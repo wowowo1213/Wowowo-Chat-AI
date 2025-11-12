@@ -12,7 +12,7 @@
         <form @submit.prevent="handleLogin">
           <input
             type="text"
-            class="w-full p-2 mb-2 rounded-lg border border-blue-300 text-gray-900 bg-white dark:border-gray-200 dark:text-white dark:bg-gray-700 pr-10 focus:border-blue-200 focus:ring-1 focus:ring-blue-200 focus:outline-none"
+            class="w-full p-2 mb-2 rounded-lg border border-blue-300 text-gray-900 bg-white dark:border-gray-400 dark:text-white dark:bg-gray-700 pr-10 focus:border-blue-200 dark:focus:border-gray-300 focus:ring-1 focus:ring-blue-200 dark:focus:ring-gray-300 focus:outline-none"
             placeholder="手机号"
             v-model="phoneNumber"
           />
@@ -20,7 +20,7 @@
           <div class="relative">
             <input
               :type="showPassword ? 'text' : 'password'"
-              class="w-full p-2 mb-4 rounded-lg border border-gray-300 text-gray-900 bg-white dark:border-gray-200 dark:text-white dark:bg-gray-700 pr-10"
+              class="w-full p-2 mb-4 rounded-lg border border-blue-300 text-gray-900 bg-white dark:border-gray-400 dark:text-white dark:bg-gray-700 pr-10 focus:border-blue-200 dark:focus:border-gray-300 focus:ring-1 focus:ring-blue-200 dark:focus:ring-gray-300 focus:outline-none"
               placeholder="密码"
               v-model="password"
             />
@@ -44,16 +44,18 @@
           </button>
         </form>
 
-        <p v-if="error" class="text-red-500 dark:text-red-700 mt-2 text-center">{{ error }}</p>
+        <p v-if="error" class="text-red-500 dark:text-red-700 mt-2 text-center font-medium">
+          {{ error }}
+        </p>
 
-        <p v-if="isRegister" class="text-gray-600 dark:text-gray-300 mt-2 text-center">
+        <p v-if="isRegister" class="text-blue-200 dark:text-gray-300 mt-2 text-center">
           注册成功，请登录
         </p>
 
         <div class="mt-4 text-center">
           <button
             @click="showRegisterModal = true"
-            class="cursor-pointer text-gray-600 hover:text-gray-900 dark:text-blue-400 hover:underline"
+            class="cursor-pointer text-gray-600 hover:text-gray-800 dark:text-blue-400 dark:hover:text-blue-500 hover:underline"
           >
             没有账号？立即注册
           </button>
@@ -72,12 +74,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 import axios from 'axios';
 import ThemeButton from '@/components/ThemeButton.vue';
 import RegisterModal from '@/components/RegisterModal.vue';
 import logoImg from '@/assets/logo.jpg';
 
 const router = useRouter();
+const userStore = useUserStore();
 const phoneNumber = ref('');
 const password = ref('');
 const showPassword = ref(false);
@@ -108,13 +112,14 @@ const handleLogin = async () => {
     });
 
     if (response.data) {
+      userStore.isUserLogin = true;
       router.push('/chat');
     }
   } catch (err: any) {
     if (Array.isArray(err.response?.data?.message)) {
-      error.value = err.response?.data?.message[0] || '登录失败';
+      error.value = err.response?.data?.message[0] || '登录失败，网络出问题啦~';
     } else {
-      error.value = err.response?.data?.message || '登录失败';
+      error.value = err.response?.data?.message || '登录失败，网络出问题啦~';
     }
   } finally {
     loading.value = false;

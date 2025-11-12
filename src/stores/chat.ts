@@ -70,15 +70,14 @@ export const useChatStore = defineStore('chat', {
       this.time[name] = Date.now();
     },
 
-    updateChatName(newName: string) {
+    updateChatName(oldName: string, newName: string) {
       const trimmed = newName?.trim();
       if (!trimmed) {
         alert('标题名字不能为空！');
         return;
       }
 
-      const currentName = this.curname;
-      if (trimmed === currentName) {
+      if (trimmed === oldName) {
         alert('前后对话标题一样！');
         return;
       }
@@ -88,16 +87,20 @@ export const useChatStore = defineStore('chat', {
         return;
       }
 
-      if (this.session[currentName]) {
-        this.session[trimmed] = this.session[currentName];
-        this.curname = trimmed; // 使用currentName指向了，所以不用担心curname的变换会丢失原先的指向，主要我有强迫症，更改顺序尽量保持和初始一样
+      if (trimmed.length > 15) {
+        alert('标题名称不能超过15个字符');
+        return;
+      }
+
+      if (this.session[oldName]) {
+        this.session[trimmed] = this.session[oldName];
         this.time[trimmed] = Date.now();
       } else {
         throw new Error('currentName在chatStore中的存储有问题！');
       }
 
-      delete this.session[currentName];
-      delete this.time[currentName];
+      delete this.session[oldName];
+      delete this.time[oldName];
     },
 
     selectChat(name: string) {

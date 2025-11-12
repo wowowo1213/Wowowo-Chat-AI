@@ -19,19 +19,22 @@
                 {{ item.content }}
               </p>
 
-              <!-- 用户上传的文件还得优化一下 -->
               <div v-if="item.attachments && item.attachments.length > 0" class="mt-4">
                 <div
                   v-for="(attachment, index) in item.attachments"
                   :key="index"
-                  class="mt-2 inline-flex items-center space-x-3 rounded-lg bg-white dark:bg-gray-700 p-2"
+                  class="mt-2 inline-flex items-center space-x-3 rounded-lg bg-white dark:bg-gray-700 p-2 transition-all duration-200"
                 >
                   <img :src="getFileIcon(attachment.type)" alt="文件图标" class="w-8 h-8" />
                   <div class="flex flex-col">
-                    <span class="text-sm text-gray-800 dark:text-gray-300">
+                    <span
+                      class="text-sm text-gray-800 dark:text-gray-300 transition-all duration-200"
+                    >
                       {{ attachment.name }}
                     </span>
-                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                    <span
+                      class="text-xs text-gray-500 dark:text-gray-400 transition-all duration-200"
+                    >
                       {{ formatFileSize(attachment.size) }}
                     </span>
                   </div>
@@ -43,7 +46,7 @@
               v-else
               class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-4 px-6 transition-all duration-200"
             >
-              <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4">
+              <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4 transition-all duration-200">
                 回答来自 通义千问-plus 大模型
               </p>
               <p v-if="item.content" class="mb-3" v-html="renderMarkdown(item.content)"></p>
@@ -69,7 +72,6 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 
 const chatStore = useChatStore();
-// 这边必须是计算属性，只调用getCurrentMessages则不会在curname变动时进行更新
 const messages = computed(() => chatStore.getCurrentMessages());
 
 const getFileIcon = (type?: string) => {
@@ -129,20 +131,20 @@ const md = (() => {
     if (lang && hljs.getLanguage(lang)) {
       try {
         const highlighted = hljs.highlight(str, { language: lang }).value;
-        return `<pre class="hljs rounded-lg p-4 mb-6 overflow-x-auto bg-gray-50 dark:bg-gray-800"><code>${highlighted}</code></pre>`;
+        return `<pre class="hljs rounded-lg p-4 mb-6 overflow-x-auto bg-gray-50 dark:bg-gray-800 transition-all duration-200"><code>${highlighted}</code></pre>`;
       } catch (e) {
         console.warn('Failed to highlight code:', e);
       }
     }
-    return `<pre class="hljs mb-6"><code>${markdownIt.utils.escapeHtml(str)}</code></pre>`;
+    return `<pre class="hljs mb-6 p-4"><code>${markdownIt.utils.escapeHtml(str)}</code></pre>`;
   };
 
   markdownIt.renderer.rules = {
     ...markdownIt.renderer.rules,
-    hr: () => '<hr class="my-8 border-gray-200 dark:border-black">',
+    hr: () => '<hr class="my-8 border-gray-200 dark:border-black transition-all duration-200">',
 
     paragraph: (tokens, idx) => {
-      return `<p class="mb-6 text-gray-700 dark:text-gray-300 leading-relaxed">${tokens[idx].content}</p>`;
+      return `<p class="mb-6 text-gray-700 dark:text-gray-300 leading-relaxed transition-all duration-200">${tokens[idx].content}</p>`;
     },
 
     heading_open: (tokens, idx) => {
@@ -150,35 +152,35 @@ const md = (() => {
       const level = parseInt(token.tag.slice(1), 10);
       const classes =
         {
-          1: 'text-3xl font-bold mb-6 text-black-900 dark:text-white',
-          2: 'text-2xl font-bold mb-5 text-black-800 dark:text-gray-100',
-          3: 'text-xl font-bold mb-4 text-black-700 dark:text-gray-200',
-          4: 'text-lg font-bold mb-3 text-black-600 dark:text-gray-300',
+          1: 'text-3xl font-bold mb-6 text-black-900 dark:text-white transition-all duration-200',
+          2: 'text-2xl font-bold mb-5 text-black-800 dark:text-gray-100 transition-all duration-200',
+          3: 'text-xl font-bold mb-4 text-black-700 dark:text-gray-200 transition-all duration-200',
+          4: 'text-lg font-bold mb-3 text-black-600 dark:text-gray-300 transition-all duration-200',
         }[level] || '';
       return `<${token.tag} class="${classes}">`;
     },
 
     bullet_list_open: () =>
-      '<ul class="list-disc list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3">',
+      '<ul class="list-disc list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
     ordered_list_open: () =>
-      '<ol class="list-decimal list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3">',
+      '<ol class="list-decimal list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
     list_item_open: () => '<li class="ml-4">',
 
     link_open: (tokens, idx) => {
       const token = tokens[idx];
       token.attrPush([
         'class',
-        'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline',
+        'text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline transition-all duration-200',
       ]);
       return markdownIt.renderer.renderToken(tokens, idx, markdownIt.options);
     },
 
     code_inline: (tokens, idx) => {
-      return `<code class="bg-black text-white rounded px-2 py-1 text-sm mx-1">${markdownIt.utils.escapeHtml(tokens[idx].content)}</code>`;
+      return `<code class="bg-black text-white rounded px-2 py-1 text-sm mx-1 transition-all duration-200">${markdownIt.utils.escapeHtml(tokens[idx].content)}</code>`;
     },
 
     blockquote_open: () =>
-      '<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 mb-6 italic">',
+      '<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 mb-6 italic transition-all duration-200">',
   };
 
   return markdownIt;

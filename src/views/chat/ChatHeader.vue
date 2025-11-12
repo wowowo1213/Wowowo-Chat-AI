@@ -20,13 +20,15 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/user';
 import ThemeButton from '@/components/ThemeButton.vue';
 import logoImg from '@/assets/logo.jpg';
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const handleLogout = () => {
-  // 这边清空用户信息，使用userStore里的封装方法
-  router.push('./');
+  userStore.resetUserStore();
+  router.push('/');
 };
 </script>
