@@ -25,13 +25,10 @@
           <button
             type="button"
             @click="showPassword = !showPassword"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
           >
-            <img
-              :src="showPassword ? eyeOpen : eyeClose"
-              alt="toggle password visibility"
-              class="w-5 h-5"
-            />
+            <el-icon :size="20" v-if="showPassword"><View /></el-icon>
+            <el-icon :size="20" v-else><Hide /></el-icon>
           </button>
         </div>
 
@@ -48,13 +45,10 @@
           <button
             type="button"
             @click="showPassword = !showPassword"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
+            class="cursor-pointer absolute flex items-center justify-center right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400"
           >
-            <img
-              :src="showPassword ? eyeOpen : eyeClose"
-              alt="toggle password visibility"
-              class="w-5 h-5"
-            />
+            <el-icon :size="20" v-if="showPassword"><View /></el-icon>
+            <el-icon :size="20" v-else><Hide /></el-icon>
           </button>
         </div>
 
@@ -85,8 +79,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import axios from 'axios';
-import eyeOpen from '@/assets/eye-open.png';
-import eyeClose from '@/assets/eye-close.png';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -144,9 +136,9 @@ const handleRegister = async () => {
     close();
   } catch (err: any) {
     if (Array.isArray(err.response?.data?.message)) {
-      error.value = err.response?.data?.message[0] || '注册失败';
+      error.value = err.response?.data?.message[0] || '注册失败，网络出问题啦~';
     } else {
-      error.value = err.response?.data?.message || '注册失败';
+      error.value = err.response?.data?.message || '注册失败，网络出问题啦~';
     }
   } finally {
     loading.value = false;

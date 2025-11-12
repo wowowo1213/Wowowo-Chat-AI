@@ -41,7 +41,7 @@ export const useChatStore = defineStore('chat', {
     },
 
     getAllChats() {
-      // 按照最新更新时间排序
+      // 按照最新更新时间排序，降序排列
       return Object.keys(this.session).sort((a, b) => this.time[b]! - this.time[a]!);
     },
 

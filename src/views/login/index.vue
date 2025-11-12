@@ -12,7 +12,7 @@
         <form @submit.prevent="handleLogin">
           <input
             type="text"
-            class="w-full p-2 mb-2 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700"
+            class="w-full p-2 mb-2 rounded-lg border border-blue-300 text-gray-900 bg-white dark:border-gray-200 dark:text-white dark:bg-gray-700 pr-10 focus:border-blue-200 focus:ring-1 focus:ring-blue-200 focus:outline-none"
             placeholder="手机号"
             v-model="phoneNumber"
           />
@@ -20,7 +20,7 @@
           <div class="relative">
             <input
               :type="showPassword ? 'text' : 'password'"
-              class="w-full p-2 mb-4 rounded-lg border text-gray-900 border-gray-300 bg-white dark:text-white dark:border-gray-600 dark:bg-gray-700 pr-10"
+              class="w-full p-2 mb-4 rounded-lg border border-gray-300 text-gray-900 bg-white dark:border-gray-200 dark:text-white dark:bg-gray-700 pr-10"
               placeholder="密码"
               v-model="password"
             />
@@ -28,13 +28,10 @@
             <button
               type="button"
               @click="togglePasswordVisibility"
-              class="absolute right-3 top-2.5 text-gray-500 dark:text-gray-400"
+              class="cursor-pointer absolute flex items-center justify-center right-3 top-2.5 w-6 h-6 text-gray-500 dark:text-white"
             >
-              <img
-                :src="showPassword ? eyeOpen : eyeClose"
-                alt="toggle password"
-                class="w-5 h-5 rounded-full"
-              />
+              <el-icon :size="20" v-if="showPassword"><View /></el-icon>
+              <el-icon :size="20" v-else><Hide /></el-icon>
             </button>
           </div>
 
@@ -56,7 +53,7 @@
         <div class="mt-4 text-center">
           <button
             @click="showRegisterModal = true"
-            class="text-blue-600 hover:text-blue-800 dark:text-blue-400 hover:underline"
+            class="cursor-pointer text-gray-600 hover:text-gray-900 dark:text-blue-400 hover:underline"
           >
             没有账号？立即注册
           </button>
@@ -79,8 +76,6 @@ import axios from 'axios';
 import ThemeButton from '@/components/ThemeButton.vue';
 import RegisterModal from '@/components/RegisterModal.vue';
 import logoImg from '@/assets/logo.jpg';
-import eyeOpen from '@/assets/eye-open.png';
-import eyeClose from '@/assets/eye-close.png';
 
 const router = useRouter();
 const phoneNumber = ref('');
