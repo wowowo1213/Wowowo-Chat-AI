@@ -19,16 +19,17 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
+// 先注释掉
+// router.beforeEach((to, from, next) => {
+//   const userStore = useUserStore();
 
-  if (to.meta.requiresAuth && !userStore.isUserLogin) {
-    next({ name: 'login' });
-  } else if (to.name === 'login' && userStore.isUserLogin) {
-    next({ name: 'chat' });
-  } else {
-    next();
-  }
-});
+//   if (to.meta.requiresAuth && !userStore.isUserLogin) {
+//     next({ name: 'login' });
+//   } else if (to.name === 'login' && userStore.isUserLogin) {
+//     next({ name: 'chat' });
+//   } else {
+//     next();
+//   }
+// });
 
 export default router;

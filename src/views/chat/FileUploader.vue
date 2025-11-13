@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isFileSliceShow" class="mx-auto max-w-2xl p-6">
+  <div class="mx-auto max-w-2xl p-6">
     <el-upload
       drag
       :auto-upload="false"
@@ -42,10 +42,6 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-
-const props = defineProps({
-  isFileSliceShow: Boolean,
-});
 
 const file = ref(null);
 const chunkSize = ref(2 * 1024 * 1024); // 2MB
