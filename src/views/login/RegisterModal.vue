@@ -1,5 +1,8 @@
 <template>
-  <div v-if="isOpen" class="fixed inset-0 bg-black/50 flex items-center justify-center z-100">
+  <div
+    v-if="isRegisterModalShow"
+    class="fixed inset-0 bg-black/50 flex items-center justify-center z-100"
+  >
     <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
       <h2 class="text-xl font-semibold mb-4 dark:text-gray-200">注册账号</h2>
 
@@ -81,7 +84,7 @@ import { ref } from 'vue';
 import axios from 'axios';
 
 const props = defineProps({
-  isOpen: Boolean,
+  isRegisterModalShow: Boolean,
 });
 
 const emit = defineEmits(['close', 'register-success']);

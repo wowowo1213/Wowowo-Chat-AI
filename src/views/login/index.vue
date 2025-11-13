@@ -54,7 +54,7 @@
 
         <div class="mt-4 text-center">
           <button
-            @click="showRegisterModal = true"
+            @click="isRegisterModalShow = true"
             class="cursor-pointer text-gray-600 hover:text-gray-800 dark:text-blue-400 dark:hover:text-blue-500 hover:underline"
           >
             没有账号？立即注册
@@ -64,8 +64,8 @@
     </div>
 
     <RegisterModal
-      :isOpen="showRegisterModal"
-      @close="showRegisterModal = false"
+      :isRegisterModalShow="isRegisterModalShow"
+      @close="isRegisterModalShow = false"
       @register-success="handleRegisterSuccess"
     />
   </div>
@@ -77,7 +77,7 @@ import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import axios from 'axios';
 import ThemeButton from '@/components/ThemeButton.vue';
-import RegisterModal from '@/components/RegisterModal.vue';
+import RegisterModal from '@/views/login/RegisterModal.vue';
 import logoImg from '@/assets/logo.jpg';
 
 const router = useRouter();
@@ -87,7 +87,7 @@ const password = ref('');
 const showPassword = ref(false);
 const loading = ref(false);
 const error = ref('');
-const showRegisterModal = ref(false);
+const isRegisterModalShow = ref(false);
 const isRegister = ref(false);
 
 const togglePasswordVisibility = () => {

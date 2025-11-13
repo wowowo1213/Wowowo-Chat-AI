@@ -14,16 +14,15 @@
 
     <div class="flex items-center">
       <div class="ml-6 flex items-center justify-center">
-        <input
-          type="file"
-          multiple
+        <FlieSlice
+          :isFileSliceShow="true"
           :accept="uploadFileType"
-          ref="fileInputRef"
+          ref="fileSliceRef"
           style="display: none"
           @change="handleFileChange"
         />
 
-        <el-tooltip effect="dark" content="上传文件" placement="top">
+        <el-tooltip effect="light" content="上传文件" placement="top">
           <button
             class="rounded-full w-6 h-6 cursor-pointer hover:scale-130 hover:rotate-360 transition-all duration-200"
             @click="loadFile"
@@ -58,6 +57,7 @@ import { ref } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { Attachment } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
+import FlieSlice from './FileSlice.vue';
 import loadIcon from '@/assets/icon1.jpg';
 
 const chatStore = useChatStore();
@@ -74,12 +74,12 @@ const handleKeydown = (event: Event) => {
   }
 };
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
+const fileSliceRef = ref<HTMLInputElement | null>(null);
 const selectedFiles = ref<File[]>([]);
 const uploadFileType = '.pdf,.docx,.jpg,.png';
 
 const loadFile = () => {
-  fileInputRef.value?.click();
+  fileSliceRef.value?.click();
 };
 
 const handleFileChange = (event: Event) => {
