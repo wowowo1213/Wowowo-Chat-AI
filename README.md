@@ -62,7 +62,7 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 ```bash
 # 克隆仓库
-git clone https://github.com/Wowowo-Chat-AI.git
+git clone https://github.com/wowowo1213/Wowowo-Chat-AI
 
 # 选择仓库
 cd Wowowo-Chat-AI
@@ -85,6 +85,9 @@ npm run start      # 生产模式
 ### **3. 前端启动（Wowowo-Chat-AI）**
 
 ```bash
+# 选择仓库
+cd Wowowo-Chat-AI
+
 # 安装依赖
 npm install
 
@@ -92,7 +95,7 @@ npm install
 # .env文件
 # 修改以下字段：
 # VITE_API_URL = http://localhost:5000
-# 上面这边主要是为了和后端的本地运行端口保持一致，可自行修改
+# 上面这边主要是为了和后端的本地运行端口保持一致，可自行修改，也可以自行配置跨域
 
 # 启动服务
 npm run dev

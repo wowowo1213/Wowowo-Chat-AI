@@ -139,8 +139,6 @@ import { useChatStore } from '@/stores/chat';
 import type { Attachment } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
 
-defineOptions({ name: 'ChatInput' });
-
 const chatStore = useChatStore();
 const message = ref('');
 const fileInput = ref<HTMLInputElement | null>(null);
