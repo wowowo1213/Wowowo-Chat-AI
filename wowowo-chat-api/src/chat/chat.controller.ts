@@ -21,7 +21,7 @@ export class ChatController {
     const messages = body.messages;
     try {
       res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Cache-Control', 'no-store');
       res.setHeader('Connection', 'keep-alive');
       res.setHeader('Access-Control-Allow-Origin', '*');
 
@@ -29,8 +29,8 @@ export class ChatController {
 
       res.write('data: {"type": "start"}\n\n');
 
-      for await (const chunk of this.chatService.streamChat(messages)) {
-        const data = JSON.stringify({ type: 'chunk', content: chunk });
+      for await (const content of this.chatService.streamChat(messages)) {
+        const data = JSON.stringify({ type: 'chunk', content });
         res.write(`data: ${data}\n\n`);
       }
 
@@ -39,7 +39,6 @@ export class ChatController {
     } catch (error) {
       const errorData = JSON.stringify({
         type: 'error',
-        error: '服务器内部错误',
         message: error.message,
       });
       res.write(`data: ${errorData}\n\n`);

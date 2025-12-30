@@ -22,13 +22,10 @@ export class ChatService {
 
       for await (const chunk of stream) {
         const content = chunk.choices[0]?.delta?.content;
-        if (content) {
-          yield content;
-        }
+        yield content;
       }
     } catch (error) {
-      console.error('AI服务错误：', error);
-      throw new Error('AI服务调用失败');
+      throw new Error(`AI服务调用失败: ${error}`);
     }
   }
 }

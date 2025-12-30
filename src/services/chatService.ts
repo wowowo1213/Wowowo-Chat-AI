@@ -5,12 +5,12 @@ export class ChatService {
   private controller: AbortController | null = null;
   private chatStore = useChatStore();
 
-  async connectToStream(chat: ChatMessage[]) {
+  async connectToStream(chatMessages: ChatMessage[]) {
     this.disconnect();
     this.controller = new AbortController();
 
     try {
-      const messages = chat.slice(-10);
+      const messages = chatMessages.slice(-10);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/chat/stream-sse`, {
         method: 'POST',
         headers: {
@@ -55,10 +55,9 @@ export class ChatService {
   }
 
   disconnect() {
-    if (this.controller) {
-      this.controller.abort();
-      this.controller = null;
-    }
+    if (!this.controller) return;
+    this.controller.abort();
+    this.controller = null;
   }
 }
 
