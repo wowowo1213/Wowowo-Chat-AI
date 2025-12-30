@@ -27,8 +27,6 @@ export class UserinfoService {
 
     return {
       phoneNumber,
-      password, // 实际不应返回，我们此处返回
-      confirmPassword, // 实际不应返回，我们此处返回
     };
   }
 
@@ -47,7 +45,6 @@ export class UserinfoService {
 
     return {
       phoneNumber,
-      password, // 实际不应返回，我们此处返回
     };
   }
 }

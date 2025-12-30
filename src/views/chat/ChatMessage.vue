@@ -6,10 +6,10 @@
       :min-item-size="100"
       :key="chatStore.curname"
       key-field="_key"
+      style="scrollbar-width: none"
     >
       <template #default="{ item, index, active }">
         <DynamicScrollerItem :item="item" :active="active" :data-index="index">
-          <!-- 这边滚动条显示之后会破坏padding的原有设定样式 -->
           <div :class="item.role === 'user' ? 'flex justify-end pr-40 pb-6' : 'px-40 pb-6'">
             <div
               v-if="item.role === 'user'"

@@ -1,18 +1,15 @@
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-interface UserState {
-  isUserLogin: boolean;
-}
+export const useUserStore = defineStore('user', () => {
+  const isUserLogin = ref(false);
 
-export const useUserStore = defineStore('user', {
-  state: (): UserState => {
-    return {
-      isUserLogin: false,
-    };
-  },
-  actions: {
-    resetUserStore() {
-      this.isUserLogin = false;
-    },
-  },
+  function resetUserStore() {
+    isUserLogin.value = false;
+  }
+
+  return {
+    isUserLogin,
+    resetUserStore,
+  };
 });

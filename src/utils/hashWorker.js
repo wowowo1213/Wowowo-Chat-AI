@@ -8,7 +8,7 @@ self.onmessage = function (e) {
 
   const loadNextChunk = () => {
     const start = currentChunk * chunkSize;
-    const end = Math.min(start + chunkSize, file.size); // 考虑边界情况，当到最后一个chunk的时候要取较小值
+    const end = Math.min(start + chunkSize, file.size);
     const chunk = file.slice(start, end);
     const reader = new FileReader();
 

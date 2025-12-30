@@ -10,13 +10,13 @@ export class ChatService {
     this.controller = new AbortController();
 
     try {
-      const messages = chat.slice(-10); // 限制只能结合最后的上下10条信息回复，10条中包括ai的回复
+      const messages = chat.slice(-10);
       const response = await fetch(`${import.meta.env.VITE_API_URL}/chat/stream-sse`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages }), // 这边必须得用名字messages，不然后端内部会报错，获取不到post请求体中的messages
+        body: JSON.stringify({ messages }),
         signal: this.controller.signal,
       });
 

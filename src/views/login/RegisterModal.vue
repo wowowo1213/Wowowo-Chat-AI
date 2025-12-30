@@ -139,7 +139,7 @@ const handleRegister = async () => {
 
     emit('register-success');
     close();
-  } catch (err: any) {
+  } catch (err) {
     if (Array.isArray(err.response?.data?.message)) {
       error.value = err.response?.data?.message[0] || '注册失败，网络出问题啦~';
     } else {

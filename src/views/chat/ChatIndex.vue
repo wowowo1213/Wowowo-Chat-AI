@@ -2,11 +2,11 @@
   <div class="min-h-screen min-w-250 flex dark:bg-gray-900 transition-all duration-200">
     <div><Siderbar /></div>
 
-    <div v-if="isHome" class="flex-grow">
+    <div v-if="isHome" class="grow">
       <ChatHome />
     </div>
 
-    <div class="flex-grow flex flex-col h-screen overflow-hidden">
+    <div class="grow flex flex-col h-screen overflow-hidden">
       <ChatHeader />
       <ChatMessage />
       <ChatInput />

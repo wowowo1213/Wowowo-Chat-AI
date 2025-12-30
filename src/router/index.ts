@@ -13,23 +13,23 @@ const router = createRouter({
     {
       path: '/chat',
       name: 'chat',
-      component: () => import('@/views/chat/index.vue'),
+      component: () => import('@/views/chat/ChatIndex.vue'),
       meta: { requiresAuth: true },
     },
   ],
 });
 
 // 先注释掉
-// router.beforeEach((to, from, next) => {
-//   const userStore = useUserStore();
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
 
-//   if (to.meta.requiresAuth && !userStore.isUserLogin) {
-//     next({ name: 'login' });
-//   } else if (to.name === 'login' && userStore.isUserLogin) {
-//     next({ name: 'chat' });
-//   } else {
-//     next();
-//   }
-// });
+  if (to.meta.requiresAuth && !userStore.isUserLogin) {
+    next({ name: 'login' });
+  } else if (to.name === 'login' && userStore.isUserLogin) {
+    next({ name: 'chat' });
+  } else {
+    next();
+  }
+});
 
 export default router;

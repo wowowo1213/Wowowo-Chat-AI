@@ -6,7 +6,6 @@ import { UserinfoService } from './userinfo.service';
 export class UserinfoController {
   constructor(private readonly userinfoService: UserinfoService) {}
 
-  // localhost:5000/userinfo/register，使用post
   @Post('register')
   async registerUser(@Body() registerDto: RegisterUserDto) {
     try {
@@ -14,8 +13,6 @@ export class UserinfoController {
       return {
         result: {
           phoneNumber: user.phoneNumber,
-          password: user.password, // 实际不应返回，我们此处返回
-          confirmPassword: user.confirmPassword, // 实际不应返回，我们此处返回
         },
         message: '这是一个注册接口',
       };
@@ -24,7 +21,6 @@ export class UserinfoController {
     }
   }
 
-  // localhost:5000/userinfo/login，使用post
   @Post('login')
   async loginUser(@Body() loginDto: LoginUserDto) {
     try {
@@ -32,7 +28,6 @@ export class UserinfoController {
       return {
         result: {
           phoneNumber: user.phoneNumber,
-          password: user.password, // 实际不应返回，我们此处返回
         },
         message: '这是一个登录接口',
       };

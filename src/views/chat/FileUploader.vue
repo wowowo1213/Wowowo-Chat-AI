@@ -51,7 +51,6 @@ const isPaused = ref(false);
 const uploadStatus = ref('');
 const progressPercent = ref(0);
 
-// 计算文件hash - 使用Web Worker
 const calculateHash = (file) => {
   return new Promise((resolve, reject) => {
     const worker = new Worker(new URL('../../utils/hashWorker.js', import.meta.url));
@@ -74,7 +73,7 @@ const calculateHash = (file) => {
 
     worker.postMessage({
       file,
-      chunkSize: 5 * 1024 * 1024, // 5MB chunks for hash
+      chunkSize: 5 * 1024 * 1024,
     });
   });
 };
@@ -128,7 +127,7 @@ const uploadChunks = async (fileHash) => {
 
     const chunk = file.value.slice(
       i * chunkSize.value,
-      Math.min((i + 1) * chunkSize.value, file.value.size) // 考虑边界情况，当到最后一个chunk的时候要取较小值
+      Math.min((i + 1) * chunkSize.value, file.value.size)
     );
     const formData = new FormData();
     formData.append('chunk', chunk);
@@ -136,7 +135,6 @@ const uploadChunks = async (fileHash) => {
     formData.append('index', i);
     formData.append('name', file.value.name);
 
-    // 添加到请求队列（可扩展为并发控制）
     requests.push(
       axios
         .post('/api/upload', formData, {
