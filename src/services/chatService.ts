@@ -1,7 +1,7 @@
 import { useChatStore } from '@/stores/chat';
 import type { ChatMessage } from '@/stores/chat';
 
-export class ChatService {
+class ChatService {
   private controller: AbortController | null = null;
   private chatStore = useChatStore();
 
@@ -41,14 +41,17 @@ export class ChatService {
             } else if (data.type === 'end') {
               this.disconnect();
             } else if (data.type === 'error') {
-              console.error('Stream error:', data.error);
+              console.error('Stream error:', data.message);
               this.disconnect();
             }
           }
         }
       }
     } catch (error) {
-      console.error('SSE 连接错误:', error);
+      if (error instanceof Error && error.name === 'AbortError')
+        return console.log('SSE 连接已断开');
+
+      console.error('SSE 连接错误:', error instanceof Error ? error.message : '未知错误');
       this.chatStore.addDelta('');
       this.disconnect();
     }

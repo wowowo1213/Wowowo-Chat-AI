@@ -11,7 +11,6 @@
         style="display: none"
       />
 
-      <!-- 这边是文件预览区域 -->
       <div v-if="files.length > 0" class="flex gap-2">
         <div
           v-for="(file, index) in previewFiles"
@@ -19,7 +18,6 @@
           class="flex items-center p-2 rounded-lg border border-gray-200"
         >
           <div class="mr-2">
-            <!-- 如果上传的是图片，就使用图片自己的缩略图，如果是其他文件，就用自己的默认的icon -->
             <img
               v-if="isImage(file)"
               :src="getImageFilePreview(file)"
@@ -29,7 +27,6 @@
             <span v-else class="text-2xl">{{ getFileIcon(file) }}</span>
           </div>
 
-          <!-- 文件名通过truncate来省略 -->
           <span class="text-sm truncate w-24 dark:text-white transition-all duration-200">
             {{ file.name }}
           </span>
@@ -115,7 +112,7 @@
         <button
           v-if="!isLoading"
           @click="handleSubmit"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-all duration-200"
+          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-all duration-200"
         >
           点我发送
         </button>
@@ -136,7 +133,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useChatStore } from '@/stores/chat';
-import type { Attachment } from '@/stores/chat';
+import type { ChatMessage } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
 
 const chatStore = useChatStore();
@@ -147,24 +144,21 @@ const previewFiles = ref<File[]>([]);
 const isLoading = ref(false);
 const isHovered = ref(false);
 
-const handleKeydown = (event: Event) => {
-  // 这边实现只有 shift + enter 时才会换行，单按 enter 会发送信息
-  // 也可以实现只有 shift + enter 时才会提问，单按 enter 会换行
-  const keyboardEvent = event as KeyboardEvent;
-  if (keyboardEvent.key === 'Enter' && !keyboardEvent.shiftKey) {
+const handleKeydown = (event: Event | KeyboardEvent) => {
+  if (!(event instanceof KeyboardEvent)) return;
+  if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault();
     handleSubmit();
     message.value = '';
   }
 };
 
+// 有问题??????先跳过整个file的代码块
 const handleFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  if (!target.files) return;
-
+  const target = e.target;
+  if (!target || !(target instanceof HTMLInputElement) || !target.files) return;
   files.value.push(...Array.from(target.files));
   previewFiles.value = files.value.slice(0, 4);
-
   target.value = '';
 };
 
@@ -176,7 +170,6 @@ const triggerFileInput = (type?: 'image' | 'document' | 'bigDocument') => {
   } else if (type === 'document') {
     fileInput.value.accept = '.pdf,.docx,.xlsx,.xls,.pptx,.txt';
   } else if (type === 'bigDocument') {
-    // 大文件实现分片上传和断点续传
     fileInput.value.accept = '*/*';
   }
 
@@ -189,7 +182,7 @@ const isImage = (file: File) => {
 
 const getImageFilePreview = (file: File) => {
   if (!isImage(file)) return;
-  return URL.createObjectURL(file); // 生成临时URL用于图片预览
+  return URL.createObjectURL(file);
 };
 
 const getFileIcon = (file: File) => {
@@ -223,43 +216,44 @@ const removeFile = (index: number) => {
 
 const handleSubmit = async () => {
   const trimmedMessage = message.value.trim();
-  if (!trimmedMessage) {
-    alert('问题不能为空');
-    return;
-  }
+  if (!trimmedMessage) return alert('问题不能为空');
 
   isLoading.value = true;
 
-  const userMessage = {
+  const userMessage: ChatMessage = {
     role: 'user',
-    content: trimmedMessage,
-    attachments: [] as Attachment[],
+    content: [
+      {
+        type: 'text',
+        text: trimmedMessage,
+      },
+    ],
   };
 
-  if (files.value.length > 0) {
-    userMessage.attachments = await Promise.all(
-      files.value.map(async (file) => {
-        return {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          body: await readFileAsText(file),
-        };
-      })
-    );
-    files.value = [];
-    previewFiles.value = [];
-  }
+  // if (files.value.length > 0) {
+  //   userMessage.attachments = await Promise.all(
+  //     files.value.map(async (file) => {
+  //       return {
+  //         name: file.name,
+  //         size: file.size,
+  //         type: file.type,
+  //         body: await readFileAsText(file),
+  //       };
+  //     })
+  //   );
+  //   files.value = [];
+  //   previewFiles.value = [];
+  // }
 
   chatStore.chatPushMessage(userMessage);
-
   message.value = '';
+
   try {
-    const messages = chatStore.session[chatStore.curname] || [];
-    if (!messages) return alert('当前对话为空');
+    const messages = chatStore.session[chatStore.curname];
+    if (!messages) return;
     await chatService.connectToStream(messages);
   } catch (err) {
-    console.log('ChatInput组件中流式对话前端提交处理出错', err);
+    console.log('ChatInput组件中: ', err);
   } finally {
     isLoading.value = false;
   }
@@ -272,7 +266,6 @@ const handlePause = () => {
 </script>
 
 <style scoped>
-/* 强制更改el-input的css样式 */
 .chat-input >>> .el-textarea__inner {
   font-size: 16px;
   color: rgba(0, 0, 0, 0.8);

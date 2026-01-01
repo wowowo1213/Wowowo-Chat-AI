@@ -3,6 +3,20 @@ import { ref } from 'vue';
 
 const DEFAULT_CHAT_NAME = '新对话';
 
+interface ImageUrlContent {
+  type: 'image_url';
+  image_url: {
+    url: string;
+  };
+}
+
+interface TextContent {
+  type: 'text';
+  text: string;
+}
+
+type ContentItem = ImageUrlContent | TextContent;
+
 export interface Attachment {
   name: string;
   size: number;
@@ -12,8 +26,8 @@ export interface Attachment {
 }
 
 export interface ChatMessage {
-  role: string;
-  content: string;
+  role: 'user' | 'assistant' | 'system';
+  content: ContentItem[];
   attachments?: Attachment[];
   _key?: string;
 }
@@ -25,25 +39,31 @@ export const useChatStore = defineStore(
     const curname = ref(DEFAULT_CHAT_NAME);
     const time = ref<Record<string, number>>({});
 
-    function clearChatStore() {
+    function resetChatStore() {
       session.value = {};
       curname.value = DEFAULT_CHAT_NAME;
       time.value = {};
     }
 
-    function getAllChats() {
-      return Object.keys(session.value).sort((a, b) => time.value[b] - time.value[a]);
+    function getAllChats(): string[] {
+      return Object.keys(session.value)
+        .filter((name) => {
+          if (time.value?.[name] === undefined) {
+            console.warn(`对话 "${name}" 缺少更新时间，已过滤去除`);
+            return false;
+          }
+          return true;
+        })
+        .sort((a, b) => time.value[b]! - time.value[a]!);
     }
 
-    function getTime(name: string): number {
+    function getChatTime(name: string): number {
       return time.value[name] || 0;
     }
 
     function getNewDefaultChatName() {
       const base = DEFAULT_CHAT_NAME;
-      if (!session.value[base]) {
-        return base;
-      }
+      if (!session.value[base]) return base;
 
       let index = 1;
       let candidate = `${base} ${index}`;
@@ -62,50 +82,28 @@ export const useChatStore = defineStore(
 
     function updateChatName(oldName: string, newName: string) {
       const trimmed = newName?.trim();
-      if (!trimmed) {
-        alert('标题名字不能为空！');
-        return;
-      }
+      if (!trimmed) return alert('对话标题不能为空！');
+      if (trimmed === oldName) return alert('前后对话标题一样！');
+      if (session.value[trimmed]) return alert('已有此标题！');
+      if (trimmed.length > 15) return alert('标题名称不能超过15个字符');
+      if (!session.value[oldName]) throw new Error('当前对话不存在!');
 
-      if (trimmed === oldName) {
-        alert('前后对话标题一样！');
-        return;
-      }
-
-      if (session.value[trimmed]) {
-        alert('已有此标题！');
-        return;
-      }
-
-      if (trimmed.length > 15) {
-        alert('标题名称不能超过15个字符');
-        return;
-      }
-
-      if (session.value[oldName]) {
-        session.value[trimmed] = session.value[oldName];
-        time.value[trimmed] = Date.now();
-      } else {
-        throw new Error('currentName在chatStore中的存储有问题！');
-      }
+      session.value[trimmed] = session.value[oldName];
+      time.value[trimmed] = Date.now();
 
       delete session.value[oldName];
       delete time.value[oldName];
     }
 
-    function selectChat(name: string) {
-      if (name && curname.value !== name) {
-        // 修复拼写错误：curnam.valuee → curname.value
-        curname.value = name;
-      }
+    function changeChat(chatName: string) {
+      curname.value = chatName;
     }
 
     function deleteChat(name: string) {
-      if (name === curname.value) {
-        curname.value = DEFAULT_CHAT_NAME;
-      }
       delete session.value[name];
       delete time.value[name];
+
+      if (name === curname.value) curname.value = DEFAULT_CHAT_NAME;
     }
 
     function chatPushMessage(msg: ChatMessage) {
@@ -116,9 +114,7 @@ export const useChatStore = defineStore(
         attachments: msg.attachments || [],
       };
 
-      if (!session.value[key]) {
-        session.value[key] = [];
-      }
+      if (!session.value[key]) session.value[key] = [];
 
       session.value[key].push(message);
       time.value[key] = Date.now();
@@ -128,26 +124,31 @@ export const useChatStore = defineStore(
       const currentMessages = session.value[curname.value] || [];
       return currentMessages.map((item, index) => ({
         ...item,
-        attachments: Array.isArray(item.attachments) ? item.attachments : [],
+        attachments: item.attachments || [],
         _key: `${item.role}-${index}`,
       }));
     }
 
     function addDelta(delta: string) {
-      const key = curname.value; // 修复：curname → curname.value
-      const chat = session.value[key];
-      if (chat) {
-        if (chat[chat.length - 1]!.role !== 'assistant') {
-          chat.push({
-            role: 'assistant',
-            content: delta,
-            attachments: [],
-          });
-        } else {
-          const lastMessage = chat[chat.length - 1];
-          lastMessage!.content += delta;
-          time.value[key] = Date.now();
-        }
+      const curChat = session.value[curname.value];
+      if (!curChat) throw new Error('当前对话不存在');
+      if (curChat[curChat.length - 1]?.role !== 'assistant') {
+        curChat.push({
+          role: 'assistant',
+          content: [
+            {
+              type: 'text',
+              text: delta,
+            },
+          ],
+        });
+      } else {
+        const lastMessage = curChat[curChat.length - 1] as ChatMessage;
+        lastMessage.content.push({
+          type: 'text',
+          text: delta,
+        });
+        time.value[curname.value] = Date.now();
       }
     }
 
@@ -155,13 +156,13 @@ export const useChatStore = defineStore(
       session,
       curname,
       time,
-      clearChatStore,
+      resetChatStore,
       getAllChats,
-      getTime,
+      getChatTime,
       getNewDefaultChatName,
       generateNewChat,
       updateChatName,
-      selectChat,
+      changeChat,
       deleteChat,
       chatPushMessage,
       getCurrentMessages,

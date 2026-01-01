@@ -15,8 +15,8 @@ export class ChatService {
   async *streamChat(messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[]) {
     try {
       const stream = await this.openai.chat.completions.create({
-        model: 'qwen-plus',
-        messages: [...messages],
+        model: 'qwen3-vl-plus',
+        messages,
         stream: true,
       });
 
