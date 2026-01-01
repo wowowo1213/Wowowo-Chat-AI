@@ -38,7 +38,7 @@
           <button
             type="submit"
             :disabled="loading"
-            class="w-full p-2 rounded-lg font-medium cursor-pointer bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 text-white disabled:opacity-50"
+            class="w-full p-2 rounded-lg font-medium cursor-pointer bg-blue-500 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-purple-700 text-white disabled:opacity-50"
           >
             {{ loading ? '登录中...' : '登录' }}
           </button>

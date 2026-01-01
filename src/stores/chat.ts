@@ -10,7 +10,7 @@ interface ImageUrlContent {
   };
 }
 
-interface TextContent {
+export interface TextContent {
   type: 'text';
   text: string;
 }
@@ -20,9 +20,8 @@ type ContentItem = ImageUrlContent | TextContent;
 export interface Attachment {
   name: string;
   size: number;
-  type?: string;
-  body?: string;
-  note?: string;
+  type: string;
+  text: string;
 }
 
 export interface ChatMessage {
@@ -49,7 +48,7 @@ export const useChatStore = defineStore(
       return Object.keys(session.value)
         .filter((name) => {
           if (time.value?.[name] === undefined) {
-            console.warn(`对话 "${name}" 缺少更新时间，已过滤去除`);
+            console.warn(`对话 "${name}" 缺少更新时间，已被过滤`);
             return false;
           }
           return true;

@@ -14,29 +14,28 @@
       <div v-if="files.length > 0" class="flex gap-2">
         <div
           v-for="(file, index) in previewFiles"
-          :key="index"
+          :key="file.name"
           class="flex items-center p-2 rounded-lg border border-gray-200"
         >
           <div class="mr-2">
             <img
-              v-if="isImage(file)"
+              v-if="file.type.startsWith('image/')"
               :src="getImageFilePreview(file)"
               alt="预览"
               class="w-10 h-10 object-cover rounded"
             />
-            <span v-else class="text-2xl">{{ getFileIcon(file) }}</span>
+            <el-icon v-else :size="30">
+              <Document />
+            </el-icon>
           </div>
 
           <span class="text-sm truncate w-24 dark:text-white transition-all duration-200">
             {{ file.name }}
           </span>
 
-          <button
-            @click="removeFile(index)"
-            class="ml-2 text-black cursor-pointer dark:text-white transition-all duration-200"
-          >
-            ×
-          </button>
+          <el-icon :size="20" @click="removeFile(index)" class="ml-2 cursor-pointer">
+            <CircleClose class="dark:text-white transition-all duration-200" />
+          </el-icon>
         </div>
 
         <span v-if="files.length > 4" class="text-gray-500"> +{{ files.length - 4 }} 个文件 </span>
@@ -63,7 +62,9 @@
                   <button
                     class="rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 hover:rotate-360 transition-all duration-200"
                   >
-                    <el-icon :size="28"><CirclePlus /></el-icon>
+                    <el-icon :size="28">
+                      <CirclePlus class="dark:text-white transition-all duration-200" />
+                    </el-icon>
                   </button>
                 </template>
 
@@ -104,7 +105,9 @@
             <button
               class="rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 transition-all duration-200"
             >
-              <el-icon :size="28"> <Microphone /></el-icon>
+              <el-icon :size="28">
+                <Microphone class="dark:text-white transition-all duration-200" />
+              </el-icon>
             </button>
           </el-tooltip>
         </div>
@@ -112,7 +115,7 @@
         <button
           v-if="!isLoading"
           @click="handleSubmit"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-linear-to-r from-blue-500 to-purple-500 hover:from-blue-700 hover:to-purple-700 dark:from-gray-700 dark:to-purple-500 dark:hover:from-gray-800 dark:hover:to-purple-700 transition-all duration-200"
+          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200"
         >
           点我发送
         </button>
@@ -153,7 +156,6 @@ const handleKeydown = (event: Event | KeyboardEvent) => {
   }
 };
 
-// 有问题??????先跳过整个file的代码块
 const handleFileChange = (e: Event) => {
   const target = e.target;
   if (!target || !(target instanceof HTMLInputElement) || !target.files) return;
@@ -162,7 +164,7 @@ const handleFileChange = (e: Event) => {
   target.value = '';
 };
 
-const triggerFileInput = (type?: 'image' | 'document' | 'bigDocument') => {
+const triggerFileInput = (type: 'image' | 'document' | 'bigDocument') => {
   if (!fileInput.value) return;
 
   if (type === 'image') {
@@ -176,36 +178,22 @@ const triggerFileInput = (type?: 'image' | 'document' | 'bigDocument') => {
   fileInput.value.click();
 };
 
-const isImage = (file: File) => {
-  return file.type.startsWith('image/');
-};
-
 const getImageFilePreview = (file: File) => {
-  if (!isImage(file)) return;
   return URL.createObjectURL(file);
-};
-
-const getFileIcon = (file: File) => {
-  const extension = file.name.split('.').pop()?.toLowerCase() || '';
-  const icons: Record<string, string> = {
-    pdf: '📄',
-    docx: '📝',
-    xlsx: '📊',
-    xls: '📊',
-    pptx: '📑',
-    txt: '📄',
-    zip: '🗜️',
-    default: '📁',
-  };
-  return icons[extension] || icons.default;
 };
 
 const readFileAsText = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
     reader.readAsText(file);
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        throw new Error('FileReader result is not a string');
+      }
+    };
+    reader.onerror = reject;
   });
 };
 
@@ -230,20 +218,20 @@ const handleSubmit = async () => {
     ],
   };
 
-  // if (files.value.length > 0) {
-  //   userMessage.attachments = await Promise.all(
-  //     files.value.map(async (file) => {
-  //       return {
-  //         name: file.name,
-  //         size: file.size,
-  //         type: file.type,
-  //         body: await readFileAsText(file),
-  //       };
-  //     })
-  //   );
-  //   files.value = [];
-  //   previewFiles.value = [];
-  // }
+  if (files.value.length > 0) {
+    userMessage.attachments = await Promise.all(
+      files.value.map(async (file) => {
+        return {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          text: await readFileAsText(file),
+        };
+      })
+    );
+    files.value = [];
+    previewFiles.value = [];
+  }
 
   chatStore.chatPushMessage(userMessage);
   message.value = '';
