@@ -1,12 +1,14 @@
 <template>
-  <div class="markdown-renderer">
-    <component :is="{ render: () => parsedContent }" />
-  </div>
+  <div
+    class="prose max-w-full dark:text-white transition-colors duration-200"
+    v-html="parsedContent"
+  />
 </template>
 
 <script setup lang="ts">
-import { h, computed } from 'vue';
+import { ref, watchEffect } from 'vue';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 const props = defineProps({
   source: {
@@ -15,17 +17,10 @@ const props = defineProps({
   },
 });
 
-const renderer = new marked.Renderer();
-renderer.heading = (text, level) => h(`h${level}`, { class: `heading-${level}` }, text);
+const parsedContent = ref('');
 
-marked.setOptions({
-  renderer,
-  gfm: true,
-  breaks: true,
-});
-
-const parsedContent = computed(() => {
-  const html = marked.parse(props.source);
-  return h('div', { innerHTML: html });
+watchEffect(async () => {
+  const html = await marked.parse(props.source);
+  parsedContent.value = DOMPurify.sanitize(html);
 });
 </script>

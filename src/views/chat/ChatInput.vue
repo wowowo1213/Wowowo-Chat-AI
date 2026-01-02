@@ -38,7 +38,9 @@
           </el-icon>
         </div>
 
-        <span v-if="files.length > 4" class="text-gray-500"> +{{ files.length - 4 }} 个文件 </span>
+        <span v-if="files.length > 4" class="text-gray-500 flex items-center">
+          +{{ files.length - 4 }} 个文件
+        </span>
       </div>
     </div>
 
@@ -55,67 +57,71 @@
 
       <div class="flex items-center">
         <div class="ml-4 flex space-x-2 items-center justify-center">
-          <el-tooltip effect="dark" content="上传文件" placement="top">
-            <span>
-              <el-popover placement="top" trigger="click" :hide-after="0" :width="150">
-                <template #reference>
-                  <button
-                    class="rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 hover:rotate-360 transition-all duration-200"
-                  >
-                    <el-icon :size="28">
-                      <CirclePlus class="dark:text-white transition-all duration-200" />
-                    </el-icon>
-                  </button>
-                </template>
-
-                <div>
-                  <button
-                    class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
-                    @click="triggerFileInput('bigDocument')"
-                  >
-                    <span>大文件</span>
-                    <el-icon :size="14">
-                      <Document />
-                    </el-icon>
-                  </button>
-                  <button
-                    class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
-                    @click="triggerFileInput('document')"
-                  >
-                    <span> 文档 </span>
-                    <el-icon :size="14">
-                      <Document />
-                    </el-icon>
-                  </button>
-                  <button
-                    class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
-                    @click="triggerFileInput('image')"
-                  >
-                    <span> 图片 </span>
-                    <el-icon :size="14">
-                      <Picture />
-                    </el-icon>
-                  </button>
-                </div>
-              </el-popover>
-            </span>
-          </el-tooltip>
-
-          <el-tooltip effect="dark" content="录音转文字" placement="top">
-            <button
-              class="rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 transition-all duration-200"
+          <button
+            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 hover:rotate-360 transition-all duration-200"
+            @mouseenter="isDocumentHover = true"
+            @mouseleave="isDocumentHover = false"
+          >
+            <div
+              v-show="isDocumentHover"
+              class="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-50"
             >
-              <el-icon :size="28">
-                <Microphone class="dark:text-white transition-all duration-200" />
-              </el-icon>
-            </button>
-          </el-tooltip>
+              <button
+                class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
+                @click="triggerFileInput('bigDocument')"
+              >
+                <span>大文件</span>
+                <el-icon :size="14">
+                  <Document />
+                </el-icon>
+              </button>
+              <button
+                class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
+                @click="triggerFileInput('document')"
+              >
+                <span> 文档 </span>
+                <el-icon :size="14">
+                  <Document />
+                </el-icon>
+              </button>
+              <button
+                class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
+                @click="triggerFileInput('image')"
+              >
+                <span> 图片 </span>
+                <el-icon :size="14">
+                  <Picture />
+                </el-icon>
+              </button>
+            </div>
+
+            <el-icon :size="28">
+              <CirclePlus class="dark:text-white transition-all duration-200" />
+            </el-icon>
+          </button>
+
+          <button
+            @mouseenter="isMicrophoneHover = true"
+            @mouseleave="isMicrophoneHover = false"
+            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 transition-all duration-200"
+          >
+            <span
+              v-show="isMicrophoneHover"
+              class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-50"
+            >
+              录音转文字
+            </span>
+
+            <el-icon :size="28">
+              <Microphone class="dark:text-white transition-all duration-200" />
+            </el-icon>
+          </button>
         </div>
 
         <button
           v-if="!isLoading"
           @click="handleSubmit"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200"
+          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-blue-500 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200"
         >
           点我发送
         </button>
@@ -124,7 +130,7 @@
           @click="handlePause"
           @mouseenter="isHovered = true"
           @mouseleave="isHovered = false"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white bg-gray-400 hover:bg-red-500 transition-all duration-200"
+          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-gray-400 hover:bg-red-500 transition-all duration-200"
         >
           {{ isHovered ? '点我暂停' : '发送中...' }}
         </button>
@@ -146,6 +152,8 @@ const files = ref<File[]>([]);
 const previewFiles = ref<File[]>([]);
 const isLoading = ref(false);
 const isHovered = ref(false);
+const isDocumentHover = ref(false);
+const isMicrophoneHover = ref(false);
 
 const handleKeydown = (event: Event | KeyboardEvent) => {
   if (!(event instanceof KeyboardEvent)) return;

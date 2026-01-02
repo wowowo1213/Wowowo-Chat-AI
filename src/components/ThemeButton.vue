@@ -1,7 +1,7 @@
 <template>
   <button
     @click="toogleTheme"
-    class="px-4 py-2 rounded-lg cursor-pointer text-white bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200"
+    class="px-4 py-2 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200"
   >
     {{ themeMode }}
   </button>

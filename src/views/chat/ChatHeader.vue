@@ -2,13 +2,13 @@
   <div class="relative flex items-center justify-between p-4">
     <img :src="logoImg" alt="logo" class="w-12 h-12" />
     <h1
-      class="absolute left-1/2 transform -translate-x-1/2 text-xl font-bold dark:text-white transition-all duration-200"
+      class="display-none sm:block lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2 text-sm lg:text-md font-bold dark:text-white transition-colors duration-200"
     >
       Wowowo Chat AI
     </h1>
     <div>
       <button
-        class="mr-4 px-4 py-2 rounded-lg cursor-pointer text-white bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-800 transition-colors duration-200"
+        class="mr-4 px-4 py-2 rounded-lg cursor-pointer text-sm lg:text-md text-white bg-blue-500 0 hover:bg-blue-700 dark:bg-gray-700 dark:hover:bg-gray-800 transition-colors duration-200"
         @click="handleLogout"
       >
         Logout

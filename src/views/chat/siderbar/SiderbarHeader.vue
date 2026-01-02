@@ -3,7 +3,9 @@
     class="py-4 px-6 border-b-2 border-gray-200 dark:border-gray-700 flex flex-col items-center transition-all duration-200"
   >
     <div class="w-full flex justify-between items-center transition-all duration-200">
-      <h1 class="text-lg font-bold dark:text-white transition-all duration-200">Wowowo Chat AI</h1>
+      <h1 class="xl:text-lg md:text-md font-bold dark:text-white transition-all duration-200">
+        Wowowo Chat AI
+      </h1>
       <img :src="logoImg" alt="logo" class="h-10 w-10" />
     </div>
 

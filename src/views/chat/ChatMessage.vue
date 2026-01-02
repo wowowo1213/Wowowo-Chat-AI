@@ -2,23 +2,22 @@
   <div class="flex-1 overflow-y-auto">
     <DynamicScroller
       class="h-full w-full"
-      :items="messages"
+      :items="chatStore.getCurrentMessages()"
       :min-item-size="100"
-      :key="chatStore.curname"
       key-field="_key"
       style="scrollbar-width: none"
     >
-      <template #default="{ item, index, active }">
+      <template #default="{ item, active, index }">
         <DynamicScrollerItem :item="item" :active="active" :data-index="index">
-          <div :class="item.role === 'user' ? 'flex justify-end pr-40 pb-6' : 'px-40 pb-6'">
+          <div
+            class="px-20 md:px-30 xl:px-40 pb-6"
+            :class="item.role === 'user' ? 'flex justify-end ' : ''"
+          >
             <div
               v-if="item.role === 'user'"
-              class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[60%]"
+              class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[80%]"
             >
-              <p>
-                {{ item.content.reduce((acc: string, cur: ContentItem) => acc + cur?.text, '') }}
-              </p>
-
+              <p>{{ getMessageText(item.content) }}</p>
               <div v-if="item.attachments && item.attachments.length > 0" class="mt-4">
                 <div
                   v-for="attachment in item.attachments"
@@ -44,22 +43,13 @@
 
             <div
               v-else
-              class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-4 px-6 transition-all duration-200"
+              class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-3 px-4 transition-all duration-200 max-w-[80%]"
             >
-              <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4 transition-all duration-200">
+              <p class="text-sm text-gray-500 dark:text-gray-400 pb-2">
                 回答来自 通义千问-plus 大模型
               </p>
-              <MarkdownRenderer
-                v-if="item.content"
-                class="mb-3"
-                :source="
-                  item.content
-                    .filter((item: ContentItem) => item.type === 'text')
-                    .map((item: ContentItem) => item?.text)
-                    .join('\n\n')
-                "
-              />
-              <p v-else class="mb-3">网络出错啦，暂时无法回答您的问题🌹</p>
+              <MarkdownRenderer v-if="item.content" :source="getMessageText(item.content)" />
+              <p v-else class="text-gray-500">网络出错啦，暂时无法回答您的问题🌹</p>
             </div>
           </div>
         </DynamicScrollerItem>
@@ -69,17 +59,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
 import { useChatStore, type ContentItem } from '@/stores/chat';
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue';
 
 const chatStore = useChatStore();
-const messages = computed(() => chatStore.getCurrentMessages());
 
-const formatFileSize = (size: number): string => {
-  if (size < 1024) return `${size}B`;
-  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)}KB`;
-  if (size < 1024 * 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(1)}MB`;
-  return `${(size / (1024 * 1024 * 1024)).toFixed(1)}GB`;
+const getMessageText = (content: ContentItem[]) => {
+  return content.reduce((acc: string, cur: ContentItem) => acc + (cur?.text || ''), '');
+};
+
+const formatFileSize = (size: number) => {
+  const units = ['B', 'KB', 'MB', 'GB'];
+  let i = 0;
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024;
+    i++;
+  }
+  return `${size.toFixed(1)}${units[i]}`;
 };
 </script>
