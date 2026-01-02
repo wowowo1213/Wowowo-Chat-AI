@@ -1,6 +1,6 @@
 <template>
   <div
-    class="prose max-w-full dark:text-white transition-colors duration-200"
+    class="prose max-w-full dark:text-gray-300 transition-colors duration-200"
     v-html="parsedContent"
   />
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="chat-input px-40 pb-4 bg-white flex flex-col items-center dark:bg-gray-800 transition-all duration-200"
+    class="chat-input px-4 sm:px-10 md:px-20 lg:px-30 xl:px-40 pb-4 bg-white flex flex-col items-center dark:bg-gray-800 transition-all duration-200"
   >
     <div class="w-full my-3">
       <input
@@ -58,13 +58,25 @@
       <div class="flex items-center">
         <div class="ml-4 flex space-x-2 items-center justify-center">
           <button
-            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 hover:rotate-360 transition-all duration-200"
+            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200 dark:text-white"
             @mouseenter="isDocumentHover = true"
-            @mouseleave="isDocumentHover = false"
+            @mouseleave="
+              () => {
+                isDocumentHover = false;
+                uploadDocumentActive = false;
+              }
+            "
+            @click="uploadDocumentActive = true"
           >
-            <div
+            <span
               v-show="isDocumentHover"
-              class="absolute -top-20 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-50"
+              class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-50"
+            >
+              上传文件
+            </span>
+            <div
+              v-show="uploadDocumentActive"
+              class="absolute -top-29 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-100"
             >
               <button
                 class="cursor-pointer w-full px-2 py-2 rounded-md text-sm flex items-center justify-between hover:bg-gray-100"
@@ -103,7 +115,7 @@
           <button
             @mouseenter="isMicrophoneHover = true"
             @mouseleave="isMicrophoneHover = false"
-            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-130 transition-all duration-200"
+            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200"
           >
             <span
               v-show="isMicrophoneHover"
@@ -121,7 +133,7 @@
         <button
           v-if="!isLoading"
           @click="handleSubmit"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-blue-500 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200"
+          class="min-h-12 ml-4 px-2 md:px-4 py-1 md:py-2 h-8 md:h-12 w-22 md:w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-blue-500 hover:bg-blue-700 dark:bg-gray-600 dark:hover:bg-gray-700 transition-all duration-200"
         >
           点我发送
         </button>
@@ -130,7 +142,7 @@
           @click="handlePause"
           @mouseenter="isHovered = true"
           @mouseleave="isHovered = false"
-          class="min-h-12 min-w-26 ml-4 px-4 py-2 h-12 w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-gray-400 hover:bg-red-500 transition-all duration-200"
+          class="min-h-12 ml-4 px-2 md:px-4 py-1 md:py-2 h-8 md:h-12 w-22 md:w-26 rounded-lg cursor-pointer text-white text-sm lg:text-md bg-gray-400 hover:bg-red-500 transition-all duration-200"
         >
           {{ isHovered ? '点我暂停' : '发送中...' }}
         </button>
@@ -153,6 +165,7 @@ const previewFiles = ref<File[]>([]);
 const isLoading = ref(false);
 const isHovered = ref(false);
 const isDocumentHover = ref(false);
+const uploadDocumentActive = ref(false);
 const isMicrophoneHover = ref(false);
 
 const handleKeydown = (event: Event | KeyboardEvent) => {
@@ -183,6 +196,7 @@ const triggerFileInput = (type: 'image' | 'document' | 'bigDocument') => {
     fileInput.value.accept = '*/*';
   }
 
+  uploadDocumentActive.value = false;
   fileInput.value.click();
 };
 

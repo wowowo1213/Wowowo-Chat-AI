@@ -10,14 +10,16 @@
       <template #default="{ item, active, index }">
         <DynamicScrollerItem :item="item" :active="active" :data-index="index">
           <div
-            class="px-20 md:px-30 xl:px-40 pb-6"
+            class="px-4 sm:px-10 md:px-20 lg:px-30 xl:px-40 pb-6"
             :class="item.role === 'user' ? 'flex justify-end ' : ''"
           >
             <div
               v-if="item.role === 'user'"
               class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[80%]"
             >
-              <p>{{ getMessageText(item.content) }}</p>
+              <p class="prose max-w-full dark:text-gray-300 transition-colors duration-200">
+                {{ getMessageText(item.content) }}
+              </p>
               <div v-if="item.attachments && item.attachments.length > 0" class="mt-4">
                 <div
                   v-for="attachment in item.attachments"

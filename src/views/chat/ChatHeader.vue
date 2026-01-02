@@ -2,7 +2,7 @@
   <div class="relative flex items-center justify-between p-4">
     <img :src="logoImg" alt="logo" class="w-12 h-12" />
     <h1
-      class="display-none sm:block lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2 text-sm lg:text-md font-bold dark:text-white transition-colors duration-200"
+      class="hidden sm:inline lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2 text-sm lg:text-md font-bold dark:text-white transition-colors duration-200"
     >
       Wowowo Chat AI
     </h1>

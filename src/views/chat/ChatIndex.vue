@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen flex-1 min-w-full md:min-w-200 lg:min-w-230 xl:min-w-250 flex dark:bg-gray-900 transition-all duration-200"
+    class="min-h-screen flex-1 min-w-full md:min-w-190 lg:min-w-230 xl:min-w-250 flex dark:bg-gray-900 transition-all duration-200"
   >
     <div><Siderbar /></div>
 
