@@ -3,19 +3,13 @@ import { ref } from 'vue';
 
 const DEFAULT_CHAT_NAME = '新对话';
 
-interface ImageUrlContent {
-  type: 'image_url';
-  image_url: {
+export interface ContentItem {
+  type: 'text' | 'image_url';
+  text?: string;
+  image_url?: {
     url: string;
   };
 }
-
-export interface TextContent {
-  type: 'text';
-  text: string;
-}
-
-type ContentItem = ImageUrlContent | TextContent;
 
 export interface Attachment {
   name: string;
@@ -129,8 +123,7 @@ export const useChatStore = defineStore(
     }
 
     function addDelta(delta: string) {
-      const curChat = session.value[curname.value];
-      if (!curChat) throw new Error('当前对话不存在');
+      const curChat = session.value[curname.value] || [];
       if (curChat[curChat.length - 1]?.role !== 'assistant') {
         curChat.push({
           role: 'assistant',

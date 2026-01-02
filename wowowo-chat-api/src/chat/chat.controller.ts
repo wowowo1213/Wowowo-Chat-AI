@@ -2,19 +2,13 @@ import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
 import type { Response } from 'express';
 import { ChatService } from './chat.service';
 
-interface ImageUrlContent {
-  type: 'image_url';
-  image_url: {
+interface ContentItem {
+  type: 'text' | 'image_url';
+  text?: string;
+  image_url?: {
     url: string;
   };
 }
-
-interface TextContent {
-  type: 'text';
-  text: string;
-}
-
-type ContentItem = ImageUrlContent | TextContent;
 
 interface Message {
   role: 'user' | 'assistant' | 'system';
@@ -31,13 +25,6 @@ export class ChatController {
 
   @Post('stream-sse')
   async streamChatSSE(@Body() body: ChatRequest, @Res() res: Response) {
-    const adaptedMessages = body.messages.map((msg) => {
-      return {
-        role: msg.role,
-        content: JSON.stringify(msg.content),
-      };
-    });
-
     try {
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-store');
@@ -48,7 +35,7 @@ export class ChatController {
 
       res.write('data: {"type": "start"}\n\n');
 
-      for await (const content of this.chatService.streamChat(adaptedMessages)) {
+      for await (const content of this.chatService.streamChat(body.messages)) {
         const data = JSON.stringify({ type: 'chunk', content });
         res.write(`data: ${data}\n\n`);
       }

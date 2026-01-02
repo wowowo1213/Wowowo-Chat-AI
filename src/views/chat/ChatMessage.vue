@@ -16,7 +16,7 @@
               class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[60%]"
             >
               <p>
-                {{ item.content.reduce((acc: string, cur: TextContent) => acc + cur.text, '') }}
+                {{ item.content.reduce((acc: string, cur: ContentItem) => acc + cur?.text, '') }}
               </p>
 
               <div v-if="item.attachments && item.attachments.length > 0" class="mt-4">
@@ -49,12 +49,14 @@
               <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4 transition-all duration-200">
                 回答来自 通义千问-plus 大模型
               </p>
-              <button @click="click">click</button>
               <MarkdownRenderer
                 v-if="item.content"
                 class="mb-3"
-                :content="
-                  item.content.reduce((acc: string, cur: TextContent) => acc + cur.text, '')
+                :source="
+                  item.content
+                    .filter((item: ContentItem) => item.type === 'text')
+                    .map((item: ContentItem) => item?.text)
+                    .join('\n\n')
                 "
               />
               <p v-else class="mb-3">网络出错啦，暂时无法回答您的问题🌹</p>
@@ -68,15 +70,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useChatStore, type TextContent } from '@/stores/chat';
+import { useChatStore, type ContentItem } from '@/stores/chat';
 import MarkdownRenderer from '@/components/MarkdownRenderer.vue';
 
 const chatStore = useChatStore();
 const messages = computed(() => chatStore.getCurrentMessages());
-
-const click = () => {
-  console.log(chatStore.getCurrentMessages());
-};
 
 const formatFileSize = (size: number): string => {
   if (size < 1024) return `${size}B`;
