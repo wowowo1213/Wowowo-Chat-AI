@@ -81,9 +81,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
-const props = defineProps({
+defineProps({
   isRegisterModalShow: Boolean,
 });
 
@@ -140,10 +140,10 @@ const handleRegister = async () => {
     emit('register-success');
     close();
   } catch (err) {
-    if (Array.isArray(err.response?.data?.message)) {
-      error.value = err.response?.data?.message[0] || '注册失败，网络出问题啦~';
-    } else {
-      error.value = err.response?.data?.message || '注册失败，网络出问题啦~';
+    if (err instanceof AxiosError) {
+      if (!err.response?.data?.message) return;
+      const message = err.response.data.message;
+      error.value = Array.isArray(message) ? message[0] : message;
     }
   } finally {
     loading.value = false;

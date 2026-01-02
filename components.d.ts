@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CodeParser: typeof import('./src/components/CodeParser.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElIcon: typeof import('element-plus/es')['ElIcon']
@@ -20,8 +21,11 @@ declare module 'vue' {
     ElProgress: typeof import('element-plus/es')['ElProgress']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    MarkdownRenderer: typeof import('./src/components/MarkdownRenderer.vue')['default']
+    MermaidParser: typeof import('./src/components/MermaidParser.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Text: typeof import('./src/components/text.vue')['default']
     ThemeButton: typeof import('./src/components/ThemeButton.vue')['default']
   }
 }

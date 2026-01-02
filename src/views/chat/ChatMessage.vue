@@ -25,7 +25,7 @@
                   :key="attachment.name"
                   class="mt-2 inline-flex items-center space-x-3 rounded-lg bg-white dark:bg-gray-700 p-2 transition-all duration-200"
                 >
-                  <!-- <img :src="getFileIcon(attachment.type)" alt="文件图标" class="w-8 h-8" /> -->
+                  <el-icon class="w-8 h-8" :size="20"><Document /></el-icon>
                   <div class="flex flex-col">
                     <span
                       class="text-sm text-gray-800 dark:text-gray-300 transition-all duration-200"
@@ -49,7 +49,14 @@
               <p class="mt-3 text-gray-600 dark:text-gray-400 pb-4 transition-all duration-200">
                 回答来自 通义千问-plus 大模型
               </p>
-              <p v-if="item.content" class="mb-3" v-html="renderMarkdown(item.content)"></p>
+              <button @click="click">click</button>
+              <MarkdownRenderer
+                v-if="item.content"
+                class="mb-3"
+                :content="
+                  item.content.reduce((acc: string, cur: TextContent) => acc + cur.text, '')
+                "
+              />
               <p v-else class="mb-3">网络出错啦，暂时无法回答您的问题🌹</p>
             </div>
           </div>
@@ -62,9 +69,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useChatStore, type TextContent } from '@/stores/chat';
+import MarkdownRenderer from '@/components/MarkdownRenderer.vue';
 
 const chatStore = useChatStore();
 const messages = computed(() => chatStore.getCurrentMessages());
+
+const click = () => {
+  console.log(chatStore.getCurrentMessages());
+};
 
 const formatFileSize = (size: number): string => {
   if (size < 1024) return `${size}B`;

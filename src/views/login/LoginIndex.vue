@@ -5,9 +5,7 @@
     <div class="min-h-screen flex items-center justify-center dark:bg-gray-900">
       <div class="p-8 max-w-md rounded-lg bg-blue-400 dark:bg-gray-700">
         <img :src="logoImg" alt="logo" class="mx-auto w-24 h-24 mb-4" />
-        <h1 class="text-2xl font-semibold mb-4 text-center dark:text-gray-200">
-          欢迎来到WOWOWO CHAT AI😊
-        </h1>
+        <h1 class="text-2xl font-semibold mb-4 text-center dark:text-gray-200">WOWOWO CHAT AI😊</h1>
 
         <form @submit.prevent="handleLogin">
           <input
@@ -75,7 +73,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import ThemeButton from '@/components/ThemeButton.vue';
 import RegisterModal from '@/views/login/RegisterModal.vue';
 import logoImg from '@/assets/logo.jpg';
@@ -111,15 +109,15 @@ const handleLogin = async () => {
       password: password.value,
     });
 
-    if (response.data) {
-      userStore.isUserLogin = true;
-      router.push('/chat');
-    }
-  } catch (err: any) {
-    if (Array.isArray(err.response?.data?.message)) {
-      error.value = err.response?.data?.message[0] || '登录失败，网络出问题啦~';
-    } else {
-      error.value = err.response?.data?.message || '登录失败，网络出问题啦~';
+    if (!response.data) return;
+
+    userStore.isUserLogin = true;
+    router.push('/chat');
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      if (!err.response?.data?.message) return;
+      const message = err.response.data.message;
+      error.value = Array.isArray(message) ? message[0] : message;
     }
   } finally {
     loading.value = false;
