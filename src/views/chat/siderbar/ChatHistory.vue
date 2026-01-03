@@ -4,7 +4,7 @@
       对话历史记录
     </h2>
 
-    <div class="max-h-117 overflow-y-scroll px-6" style="scrollbar-width: none">
+    <div class="max-h-120 overflow-y-scroll px-6" style="scrollbar-width: none">
       <DynamicScroller
         class="h-full w-full"
         :items="chatStore.getAllChats().map((name) => ({ name }))"
@@ -56,9 +56,9 @@
                         class="cursor-pointer w-full px-2 py-2 rounded-md text-left text-sm flex items-center justify-between hover:bg-gray-100"
                         @click="chatStore.deleteChat(item.name)"
                       >
-                        <span class="text-red-500 hover:text-red-600 dark:hover:text-red-400"
-                          >删除</span
-                        >
+                        <span class="text-red-500 hover:text-red-600 dark:hover:text-red-400">
+                          删除
+                        </span>
                         <el-icon :size="14">
                           <Delete class="text-red-500" />
                         </el-icon>

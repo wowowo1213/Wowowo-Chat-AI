@@ -1,6 +1,6 @@
 <template>
   <div
-    class="chat-input px-4 sm:px-10 md:px-20 lg:px-30 xl:px-40 pb-4 bg-white flex flex-col items-center dark:bg-gray-800 transition-all duration-200"
+    class="chat_input px-4 sm:px-10 md:px-20 lg:px-30 xl:px-40 pb-4 bg-white flex flex-col items-center dark:bg-gray-800 transition-all duration-200"
   >
     <div class="w-full my-3">
       <input
@@ -49,7 +49,7 @@
         type="textarea"
         v-model="message"
         placeholder="请输入问题( shift + enter 换行)"
-        class="max-h-44 font-bold"
+        class="max-h-44"
         resize="none"
         :autosize="{ minRows: 2, maxRows: 4 }"
         @keydown="handleKeydown"
@@ -276,8 +276,8 @@ const handlePause = () => {
 </script>
 
 <style scoped>
-.chat-input >>> .el-textarea__inner {
-  font-size: 16px;
+.chat_input >>> .el-textarea__inner {
+  font-size: 14px;
   color: rgba(0, 0, 0, 0.8);
 }
 </style>

@@ -5,6 +5,7 @@
       :items="chatStore.getCurrentMessages()"
       :min-item-size="100"
       key-field="_key"
+      :buffer="500"
       style="scrollbar-width: none"
     >
       <template #default="{ item, active, index }">
@@ -50,8 +51,7 @@
               <p class="text-sm text-gray-500 dark:text-gray-400 pb-2">
                 回答来自 通义千问-plus 大模型
               </p>
-              <MarkdownRenderer v-if="item.content" :source="getMessageText(item.content)" />
-              <p v-else class="text-gray-500">网络出错啦，暂时无法回答您的问题🌹</p>
+              <AiMessageContent :source="getMessageText(item.content)" />
             </div>
           </div>
         </DynamicScrollerItem>
@@ -62,7 +62,7 @@
 
 <script setup lang="ts">
 import { useChatStore, type ContentItem } from '@/stores/chat';
-import MarkdownRenderer from '@/components/MarkdownRenderer.vue';
+import AiMessageContent from './AiMessageContent.vue';
 
 const chatStore = useChatStore();
 
