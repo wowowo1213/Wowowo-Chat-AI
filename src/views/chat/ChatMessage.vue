@@ -2,10 +2,9 @@
   <div class="flex-1 overflow-y-auto">
     <DynamicScroller
       class="h-full w-full"
-      :items="chatStore.getCurrentMessages()"
+      :items="chatMessages"
       :min-item-size="100"
       key-field="_key"
-      :buffer="500"
       style="scrollbar-width: none"
     >
       <template #default="{ item, active, index }">
@@ -51,7 +50,7 @@
               <p class="text-sm text-gray-500 dark:text-gray-400 pb-2">
                 回答来自 通义千问-plus 大模型
               </p>
-              <AiMessageContent :source="getMessageText(item.content)" />
+              <AiMessageContent :source="getAiMessageText(item.content, item._key)" />
             </div>
           </div>
         </DynamicScrollerItem>
@@ -61,13 +60,54 @@
 </template>
 
 <script setup lang="ts">
-import { useChatStore, type ContentItem } from '@/stores/chat';
+import { ref, watch } from 'vue';
+import { useChatStore, type ChatMessage, type ContentItem } from '@/stores/chat';
 import AiMessageContent from './AiMessageContent.vue';
 
 const chatStore = useChatStore();
 
+const chatMessages = ref<ChatMessage[]>([]);
+const temp = ref<number | null>(null);
+
+watch(
+  () => chatStore.getCurrentMessages(),
+  (newVal) => {
+    if (!temp.value) {
+      temp.value = setTimeout(() => {
+        chatMessages.value = newVal;
+        temp.value = null;
+      }, 300);
+    }
+  }
+);
+
 const getMessageText = (content: ContentItem[]) => {
   return content.reduce((acc: string, cur: ContentItem) => acc + (cur?.text || ''), '');
+};
+
+const messageBuffers = new Map<string, { buffer: string; timer: number | null; first: boolean }>();
+
+const getAiMessageText = (content: ContentItem[], messageKey: string) => {
+  if (!messageBuffers.has(messageKey)) {
+    messageBuffers.set(messageKey, { buffer: '', timer: null, first: false });
+  }
+
+  const msgBuffer = messageBuffers.get(messageKey)!;
+
+  if (!msgBuffer.first) {
+    msgBuffer.buffer = content.reduce((acc, cur) => acc + (cur?.text || ''), '');
+    msgBuffer.first = true;
+  }
+
+  if (!msgBuffer.timer) {
+    msgBuffer.timer = setTimeout(() => {
+      msgBuffer.buffer = content.reduce((acc, cur) => acc + (cur?.text || ''), '');
+      console.log(msgBuffer.buffer);
+      msgBuffer.timer = null;
+    }, 600);
+  }
+
+  return msgBuffer.buffer;
 };
 
 const formatFileSize = (size: number) => {

@@ -75,11 +75,11 @@ export const useChatStore = defineStore(
 
     function updateChatName(oldName: string, newName: string) {
       const trimmed = newName?.trim();
+      if (!session.value[oldName]) throw new Error('当前对话不存在!');
       if (!trimmed) return alert('对话标题不能为空！');
       if (trimmed === oldName) return alert('前后对话标题一样！');
       if (session.value[trimmed]) return alert('已有此标题！');
       if (trimmed.length > 15) return alert('标题名称不能超过15个字符');
-      if (!session.value[oldName]) throw new Error('当前对话不存在!');
 
       session.value[trimmed] = session.value[oldName];
       time.value[trimmed] = Date.now();

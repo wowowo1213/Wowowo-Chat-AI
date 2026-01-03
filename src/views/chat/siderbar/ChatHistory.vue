@@ -97,15 +97,18 @@ const newTitle = ref('');
 const currentItem = ref('');
 
 const formatTime = (timestamp: number) => {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now.getTime() - timestamp;
+  if (!timestamp) return '未开始';
 
-  if (diff < 24 * 60 * 60 * 1000 && date.getDate() === now.getDate()) {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
+  const minute = 60 * 1000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  const diff = Date.now() - timestamp;
 
-  return date.toLocaleDateString([], {
+  if (diff < minute) return '刚刚';
+  if (diff < hour) return `${Math.floor(diff / minute)} 分钟前`;
+  if (diff < day) return `${Math.floor(diff / hour)} 小时前`;
+
+  return new Date(timestamp).toLocaleDateString([], {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',

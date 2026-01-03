@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" v-html="partialContent" />
+  <div v-html="partialContent" />
 </template>
 
 <script setup lang="ts">
@@ -8,8 +8,7 @@ import MarkdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 
-const props = defineProps<{ source: string }>();
-const container = ref<HTMLElement | null>(null);
+const props = defineProps<{ source: string | undefined }>();
 const partialContent = ref('');
 const isRendering = ref(false);
 
