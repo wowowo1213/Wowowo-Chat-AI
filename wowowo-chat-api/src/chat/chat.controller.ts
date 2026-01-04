@@ -44,10 +44,6 @@ export class ChatController {
 
       res.write('data: {"type": "start"}\n\n');
 
-      const extractBase64FromDataUrl = (dataUrl: string): string => {
-        return dataUrl.split(',')[1];
-      };
-
       const messages = body.messages.map((message) => {
         const newMessage: Message = {
           role: message.role,
@@ -56,10 +52,10 @@ export class ChatController {
 
         message.attachments?.forEach((attachment) => {
           if (attachment.type.startsWith('image/') && attachment.imgurl) {
-            const base64 = extractBase64FromDataUrl(attachment.imgurl);
+            console.log(attachment.imgurl);
             newMessage.content.push({
               type: 'image_url',
-              image_url: { url: base64 },
+              image_url: { url: attachment.imgurl },
             });
           } else {
             newMessage.content.push({
@@ -71,6 +67,9 @@ export class ChatController {
 
         return newMessage;
       });
+
+      const data = JSON.stringify({ type: 'chunk', messages });
+      res.write(`data: ${data}\n\n`);
 
       for await (const content of this.chatService.streamChat(messages)) {
         const data = JSON.stringify({ type: 'chunk', content });

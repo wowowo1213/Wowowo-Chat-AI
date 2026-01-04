@@ -68,6 +68,9 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 # 登录（首次）
 ngrok config add-authtoken YOUR_AUTHTOKEN
+
+# 暴露本地 3000 端口
+ngrok http 3000
 ```
 
 运行文件

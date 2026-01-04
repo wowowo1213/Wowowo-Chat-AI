@@ -18,7 +18,6 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
     "@tailwindcss/vite": "^4.1.16",
-    "axios": "^1.12.2",
     "element-plus": "^2.11.5",
     "highlight.js": "^11.11.1",
     "katex": "^0.16.27",

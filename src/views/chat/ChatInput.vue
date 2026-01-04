@@ -219,21 +219,6 @@ const readFileAsText = (file: File): Promise<string> => {
   });
 };
 
-const readFileAsDataURL = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result);
-      } else {
-        reject(new Error('FileReader result is not a string'));
-      }
-    };
-    reader.onerror = reject;
-  });
-};
-
 const removeFile = (index: number) => {
   files.value.splice(index, 1);
   previewFiles.value = files.value.slice(0, 4);
@@ -259,11 +244,25 @@ const handleSubmit = async () => {
     userMessage.attachments = await Promise.all(
       files.value.map(async (file) => {
         if (file.type.startsWith('image/')) {
+          let url;
+          const formData = new FormData();
+          formData.append('file', file);
+
+          await fetch('http://localhost:3000/upload/file', {
+            method: 'POST',
+            body: formData,
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              url = data.url;
+            })
+            .catch((error) => console.error('上传失败:', error));
+
           return {
             name: file.name,
             size: file.size,
             type: file.type,
-            imgurl: await readFileAsDataURL(file),
+            imgurl: url,
             previewUrl: URL.createObjectURL(file),
           };
         }
