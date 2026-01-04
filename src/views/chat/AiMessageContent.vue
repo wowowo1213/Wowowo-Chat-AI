@@ -1,16 +1,57 @@
 <template>
-  <div v-html="partialContent" />
+  <div v-html="parsedContent" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
 import MarkdownIt from 'markdown-it';
+import { markdownItTable } from 'markdown-it-table';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 
-const props = defineProps<{ source: string | undefined }>();
-const partialContent = ref('');
-const isRendering = ref(false);
+const props = defineProps<{ source: string }>();
+const parsedContent = ref('');
+
+const addCopyButtons = () => {
+  nextTick(() => {
+    const tipBlocks = document.querySelectorAll('.ai_message_content_tip');
+    tipBlocks.forEach((block) => {
+      if (block.querySelector('.ai_message_content_tip_button')) return;
+
+      const button = document.createElement('button');
+      button.className =
+        'ai_message_content_tip_button text-gray-100 bg-gray-800 rounded-xl px-2 py-1 cursor-pointer';
+      button.textContent = '复制';
+
+      button.addEventListener('click', () => {
+        const preElement = block.closest('pre');
+        const code = preElement?.querySelector('code')?.textContent ?? '';
+
+        navigator.clipboard
+          .writeText(code)
+          .then(() => {
+            button.textContent = '已复制!';
+            setTimeout(() => {
+              button.textContent = '复制';
+            }, 2000);
+          })
+          .catch((err) => {
+            console.error('复制失败：', err);
+            button.textContent = '复制失败';
+            setTimeout(() => {
+              button.textContent = '复制';
+            }, 2000);
+          });
+      });
+
+      block.appendChild(button);
+    });
+  });
+};
+
+onMounted(() => {
+  addCopyButtons();
+});
 
 const md = new MarkdownIt({
   html: true,
@@ -19,27 +60,20 @@ const md = new MarkdownIt({
   typographer: true,
 });
 
+md.use(markdownItTable);
+
 md.options.highlight = (str, lang) => {
   if (lang && hljs.getLanguage(lang)) {
-    try {
-      const highlighted = hljs.highlight(str, { language: lang }).value;
-      return `<pre class="hljs rounded-lg p-4 mb-6 overflow-x-auto bg-gray-50 dark:bg-gray-800 transition-all duration-200"><code>${highlighted}</code></pre>`;
-    } catch (e) {
-      console.warn('Failed to highlight code:', e);
-    }
+    const highlighted = hljs.highlight(str, { language: lang }).value;
+    return `<pre class="bg-black rounded-lg p-4 my-6 overflow-x-auto"><div class="flex justify-between mb-2 ai_message_content_tip"><span class="text-gray-100">${lang}</span></div><code class="text-white">${highlighted}</code></pre>`;
   }
-  return `<pre class="hljs mb-6 p-4 overflow-x-auto"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+  return `<pre class="bg-black my-6 p-4 overflow-x-auto"><code class="text-white">${md.utils.escapeHtml(str)}</code></pre>`;
 };
 
 md.renderer.rules = {
   ...md.renderer.rules,
-  hr: () => '<hr class="my-8 border-gray-200 dark:border-black transition-all duration-200">',
 
-  paragraph: (tokens, idx) => {
-    const token = tokens[idx];
-    if (!token) return '<p>渲染出错!!!</p>';
-    return `<p class="mb-6 text-gray-700 dark:text-gray-300 leading-relaxed transition-all duration-200">${token.content}</p>`;
-  },
+  hr: () => '<hr class="my-8 border-gray-200 dark:border-black transition-all duration-200">',
 
   heading_open: (tokens, idx) => {
     const token = tokens[idx];
@@ -56,9 +90,9 @@ md.renderer.rules = {
   },
 
   bullet_list_open: () =>
-    '<ul class="list-disc list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
+    '<ul class="mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
   ordered_list_open: () =>
-    '<ol class="list-decimal list-inside mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
+    '<ol class="mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
   list_item_open: () => '<li class="ml-4">',
 
   link_open: (tokens, idx) => {
@@ -74,43 +108,35 @@ md.renderer.rules = {
   code_inline: (tokens, idx) => {
     const token = tokens[idx];
     if (!token) return '<p>渲染出错!!!</p>';
-    return `<code class="bg-black text-white rounded px-2 py-1 text-sm mx-1 transition-all duration-200">${md.utils.escapeHtml(token.content)}</code>`;
+    return `<code class="bg-black text-white rounded-sm px-2 py-1 text-sm transition-all duration-200">${md.utils.escapeHtml(token.content)}</code>`;
   },
 
   blockquote_open: () => {
     return '<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 mb-6 italic transition-all duration-200">';
   },
-};
 
-const splitMarkdownIntoChunks = (text: string): string[] => {
-  return text.split(/(?:\r?\n){2,}/).filter((chunk) => chunk.trim());
-};
-
-const renderInChunks = (text: string) => {
-  const chunks = splitMarkdownIntoChunks(text);
-  let index = 0;
-  isRendering.value = true;
-
-  const renderNextChunk = () => {
-    if (index < chunks.length) {
-      const chunk = chunks[index];
-      if (!chunk) return;
-      partialContent.value += md.render(chunk);
-      index++;
-      requestAnimationFrame(renderNextChunk);
-    } else {
-      isRendering.value = false;
-    }
-  };
-
-  partialContent.value = '';
-  renderNextChunk();
+  table_open: () => '<table class="w-full border-collapse overflow-x-auto my-4">',
+  table_close: () => '</table>',
+  thead_open: () => '<thead class="bg-gray-100 dark:bg-gray-800 transition-colors duration-200">',
+  thead_close: () => '</thead>',
+  tbody_open: () => '<tbody>',
+  tbody_close: () => '</tbody>',
+  tr_open: () =>
+    `<tr class="${'border-b border-gray-200 dark:border-gray-600 transition-colors duration-200'}">`,
+  tr_close: () => '</tr>',
+  th_open: () =>
+    '<th class="px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100 transition-colors duration-200">',
+  th_close: () => '</th>',
+  td_open: () =>
+    '<td class="px-4 py-2 text-gray-700 dark:text-gray-300 transition-colors duration-200">',
+  td_close: () => '</td>',
 };
 
 watch(
   () => props.source,
   (newVal) => {
-    if (newVal && !isRendering.value) renderInChunks(newVal);
+    if (!newVal) return;
+    parsedContent.value = md.render(newVal);
   },
   { immediate: true }
 );

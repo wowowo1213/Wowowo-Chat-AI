@@ -14,58 +14,60 @@
       >
         <template #default="{ item, active, index }">
           <DynamicScrollerItem :item="item" :active="active" :data-index="index">
-            <div
-              class="px-4 py-2 mt-2 w-full rounded-xl cursor-pointer text-lg transition-all duration-200"
-              :class="{
-                'bg-gray-200 dark:bg-gray-700 text-black dark:text-white':
-                  chatStore.curname === item.name,
-                'bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300':
-                  chatStore.curname !== item.name,
-              }"
-              @click="chatStore.changeChat(item.name)"
-            >
-              <div class="flex justify-between items-center">
-                <span class="flex-1 truncate text-sm">{{ item.name }}</span>
-                <span class="text-sm ml-4 flex items-center justify-center">
-                  <span class="hidden lg:block">
-                    {{ formatTime(chatStore.getChatTime(item.name)) }}
+            <div class="pb-2">
+              <div
+                class="px-2 py-2 w-full rounded-xl cursor-pointer text-lg transition-all duration-200"
+                :class="{
+                  'bg-gray-200 dark:bg-gray-700 text-black dark:text-white':
+                    chatStore.curname === item.name,
+                  'bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300':
+                    chatStore.curname !== item.name,
+                }"
+                @click="chatStore.changeChat(item.name)"
+              >
+                <div class="flex justify-between items-center">
+                  <span class="flex-1 truncate text-sm">{{ item.name }}</span>
+                  <span class="text-sm flex items-center justify-center">
+                    <span class="hidden lg:block">
+                      {{ formatTime(chatStore.getChatTime(item.name)) }}
+                    </span>
+
+                    <el-popover placement="bottom" trigger="click" :hide-after="0" :width="30">
+                      <template #reference>
+                        <el-icon
+                          :size="18"
+                          class="ml-2 p-1 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 transition-all duration-200"
+                        >
+                          <More />
+                        </el-icon>
+                      </template>
+
+                      <div>
+                        <button
+                          class="cursor-pointer w-full px-2 py-2 rounded-md text-left text-sm flex items-center justify-between hover:bg-gray-100"
+                          @click="openEditDialog(item.name)"
+                        >
+                          <span> 重命名 </span>
+                          <el-icon :size="14">
+                            <Edit />
+                          </el-icon>
+                        </button>
+
+                        <button
+                          class="cursor-pointer w-full px-2 py-2 rounded-md text-left text-sm flex items-center justify-between hover:bg-gray-100"
+                          @click="chatStore.deleteChat(item.name)"
+                        >
+                          <span class="text-red-500 hover:text-red-600 dark:hover:text-red-400">
+                            删除
+                          </span>
+                          <el-icon :size="14">
+                            <Delete class="text-red-500" />
+                          </el-icon>
+                        </button>
+                      </div>
+                    </el-popover>
                   </span>
-
-                  <el-popover placement="bottom" trigger="click" :hide-after="0" :width="30">
-                    <template #reference>
-                      <el-icon
-                        :size="18"
-                        class="ml-2 p-1 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 transition-all duration-200"
-                      >
-                        <More />
-                      </el-icon>
-                    </template>
-
-                    <div>
-                      <button
-                        class="cursor-pointer w-full px-2 py-2 rounded-md text-left text-sm flex items-center justify-between hover:bg-gray-100"
-                        @click="openEditDialog(item.name)"
-                      >
-                        <span> 重命名 </span>
-                        <el-icon :size="14">
-                          <Edit />
-                        </el-icon>
-                      </button>
-
-                      <button
-                        class="cursor-pointer w-full px-2 py-2 rounded-md text-left text-sm flex items-center justify-between hover:bg-gray-100"
-                        @click="chatStore.deleteChat(item.name)"
-                      >
-                        <span class="text-red-500 hover:text-red-600 dark:hover:text-red-400">
-                          删除
-                        </span>
-                        <el-icon :size="14">
-                          <Delete class="text-red-500" />
-                        </el-icon>
-                      </button>
-                    </div>
-                  </el-popover>
-                </span>
+                </div>
               </div>
             </div>
           </DynamicScrollerItem>

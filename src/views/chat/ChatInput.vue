@@ -51,7 +51,7 @@
         placeholder="请输入问题( shift + enter 换行)"
         class="max-h-44"
         resize="none"
-        :autosize="{ minRows: 2, maxRows: 4 }"
+        :autosize="{ minRows: 4, maxRows: 5 }"
         @keydown="handleKeydown"
       />
 
@@ -259,6 +259,7 @@ const handleSubmit = async () => {
   message.value = '';
 
   try {
+    chatStore.time[chatStore.curname] = Date.now();
     const messages = chatStore.session[chatStore.curname];
     if (!messages) return;
     await chatService.connectToStream(messages);

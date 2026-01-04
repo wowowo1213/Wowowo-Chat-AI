@@ -124,7 +124,7 @@ export const useChatStore = defineStore(
 
     function addDelta(delta: string) {
       const curChat = session.value[curname.value] || [];
-      if (curChat[curChat.length - 1]?.role !== 'assistant') {
+      if (curChat.length > 0 && curChat[curChat.length - 1]?.role !== 'assistant') {
         curChat.push({
           role: 'assistant',
           content: [
@@ -135,12 +135,10 @@ export const useChatStore = defineStore(
           ],
         });
       } else {
-        const lastMessage = curChat[curChat.length - 1] as ChatMessage;
-        lastMessage.content.push({
-          type: 'text',
-          text: delta,
-        });
-        time.value[curname.value] = Date.now();
+        const lastMessage = curChat[curChat.length - 1];
+        const curContent = lastMessage?.content[0];
+        if (!lastMessage || !curContent) return;
+        curContent.text += delta;
       }
     }
 
