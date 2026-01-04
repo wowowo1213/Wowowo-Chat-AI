@@ -15,28 +15,37 @@
           >
             <div
               v-if="item.role === 'user'"
-              class="dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[80%]"
+              class="overflow-hidden dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[80%]"
             >
-              <p class="prose max-w-full dark:text-gray-300 transition-colors duration-200">
+              <p class="max-w-full dark:text-gray-300 transition-colors duration-200">
                 {{ getMessageText(item.content) }}
               </p>
-              <div v-if="item.attachments && item.attachments.length > 0" class="mt-4">
+              <div
+                v-show="item.attachments && item.attachments.length > 0"
+                class="mt-2 flex flex-wrap gap-3"
+              >
                 <div
-                  v-for="attachment in item.attachments"
-                  :key="attachment.name"
-                  class="mt-2 inline-flex items-center space-x-3 rounded-lg bg-white dark:bg-gray-700 p-2 transition-all duration-200"
+                  v-for="file in item.attachments"
+                  :key="file.name"
+                  class="mt-2 p-2 flex flex-col items-center justify-center rounded-xl bg-white dark:bg-gray-700 transition-all duration-200"
                 >
-                  <el-icon class="w-8 h-8" :size="20"><Document /></el-icon>
-                  <div class="flex flex-col">
+                  <img
+                    v-if="file.type.startsWith('image/')"
+                    :src="file.previewUrl"
+                    alt="预览"
+                    class="w-20 h-20 object-cover"
+                  />
+                  <el-icon v-else :size="20"><Document /></el-icon>
+                  <div class="flex flex-col w-20">
                     <span
-                      class="text-sm text-gray-800 dark:text-gray-300 transition-all duration-200"
+                      class="mt-1 text-xs text-gray-800 dark:text-gray-300 truncate max-w-[100px] transition-all duration-200"
                     >
-                      {{ attachment.name }}
+                      {{ file.name }}
                     </span>
                     <span
                       class="text-xs text-gray-500 dark:text-gray-400 transition-all duration-200"
                     >
-                      {{ formatFileSize(attachment.size) }}
+                      {{ formatFileSize(file.size) }}
                     </span>
                   </div>
                 </div>

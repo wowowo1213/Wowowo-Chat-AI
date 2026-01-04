@@ -4,18 +4,17 @@ import { ref } from 'vue';
 const DEFAULT_CHAT_NAME = '新对话';
 
 export interface ContentItem {
-  type: 'text' | 'image_url';
+  type: 'text';
   text?: string;
-  image_url?: {
-    url: string;
-  };
 }
 
 export interface Attachment {
   name: string;
   size: number;
   type: string;
-  text: string;
+  text?: string;
+  imgurl?: string;
+  previewURL?: string;
 }
 
 export interface ChatMessage {

@@ -219,6 +219,21 @@ const readFileAsText = (file: File): Promise<string> => {
   });
 };
 
+const readFileAsDataURL = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('FileReader result is not a string'));
+      }
+    };
+    reader.onerror = reject;
+  });
+};
+
 const removeFile = (index: number) => {
   files.value.splice(index, 1);
   previewFiles.value = files.value.slice(0, 4);
@@ -226,7 +241,7 @@ const removeFile = (index: number) => {
 
 const handleSubmit = async () => {
   const trimmedMessage = message.value.trim();
-  if (!trimmedMessage) return alert('问题不能为空');
+  if (!trimmedMessage && files.value.length === 0) return alert('问题或文件不能为空');
 
   isLoading.value = true;
 
@@ -243,6 +258,16 @@ const handleSubmit = async () => {
   if (files.value.length > 0) {
     userMessage.attachments = await Promise.all(
       files.value.map(async (file) => {
+        if (file.type.startsWith('image/')) {
+          return {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            imgurl: await readFileAsDataURL(file),
+            previewUrl: URL.createObjectURL(file),
+          };
+        }
+
         return {
           name: file.name,
           size: file.size,

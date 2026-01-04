@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from 'utils/all-exception.filter';
 import { TransformInterceptor } from '../utils/transform.interceptor';
 import { MyLogger } from '../utils/no-timestamp-logger';
+import * as express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: new MyLogger() });
@@ -23,6 +25,8 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type',
   });
+
+  app.use('/images', express.static(join(__dirname, '..', 'public')));
 
   await app.listen(process.env.PORT ?? 3000);
 }

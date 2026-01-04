@@ -60,6 +60,18 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 ### 2. 后端启动 (`wowowo-chat-api`)
 
+安装并运行 ngrok：
+
+```bash
+# 下载 ngrok（官网注册后获取 token）
+# https://ngrok.com/download
+
+# 登录（首次）
+ngrok config add-authtoken YOUR_AUTHTOKEN
+```
+
+运行文件
+
 ```bash
 # 克隆仓库
 git clone https://github.com/wowowo1213/Wowowo-Chat-AI
