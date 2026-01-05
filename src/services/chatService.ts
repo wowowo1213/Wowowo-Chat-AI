@@ -52,7 +52,7 @@ class ChatService {
         return console.log('SSE 连接已断开');
 
       console.error('SSE 连接错误:', error instanceof Error ? error.message : '未知错误');
-      this.chatStore.addDelta('');
+      this.chatStore.addDelta('网络出错啦，暂时无法使用🌹');
       this.disconnect();
     }
   }

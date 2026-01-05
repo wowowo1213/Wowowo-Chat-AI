@@ -309,50 +309,52 @@ const handleSubmit = async () => {
   };
 
   if (files.value.length > 0) {
-    userMessage.attachments = await Promise.all(
-      files.value.map(async (file) => {
-        if (file.type.startsWith('image/')) {
-          let url;
-          const formData = new FormData();
-          formData.append('file', file);
+    try {
+      userMessage.attachments = await Promise.all(
+        files.value.map(async (file) => {
+          if (file.type.startsWith('image/')) {
+            let url;
+            const formData = new FormData();
+            formData.append('file', file);
 
-          await fetch('http://localhost:3000/upload/file', {
-            method: 'POST',
-            body: formData,
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              url = data.data.url;
+            await fetch('http://localhost:3000/upload/file', {
+              method: 'POST',
+              body: formData,
             })
-            .catch((error) => console.error('上传失败:', error));
+              .then((res) => res.json())
+              .then((data) => {
+                url = data.data.url;
+              })
+              .catch((error) => console.error('上传失败:', error));
 
-          return {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            imgurl: url,
-            previewUrl: URL.createObjectURL(file),
-          };
-        }
+            return {
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              imgurl: url,
+              previewUrl: URL.createObjectURL(file),
+            };
+          }
 
-        if (isDocx(file.type)) {
-          return {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            text: await extractDocxText(file),
-          };
-        }
+          if (isDocx(file.type)) {
+            return {
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              text: await extractDocxText(file),
+            };
+          }
 
-        alert('不支持的文件类型: ' + file.type);
-        return {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          text: '这是一个前端不支持上传的文件，忽略即可',
-        };
-      })
-    );
+          throw new Error('不支持的文件类型: ' + file.type);
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      files.value = [];
+      previewFiles.value = [];
+      isLoading.value = false;
+      return;
+    }
 
     files.value = [];
     previewFiles.value = [];
