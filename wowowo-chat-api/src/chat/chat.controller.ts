@@ -52,7 +52,6 @@ export class ChatController {
 
         message.attachments?.forEach((attachment) => {
           if (attachment.type.startsWith('image/') && attachment.imgurl) {
-            console.log(attachment.imgurl);
             newMessage.content.push({
               type: 'image_url',
               image_url: { url: attachment.imgurl },
@@ -67,9 +66,6 @@ export class ChatController {
 
         return newMessage;
       });
-
-      const data = JSON.stringify({ type: 'chunk', messages });
-      res.write(`data: ${data}\n\n`);
 
       for await (const content of this.chatService.streamChat(messages)) {
         const data = JSON.stringify({ type: 'chunk', content });

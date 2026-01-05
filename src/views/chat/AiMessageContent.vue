@@ -108,11 +108,11 @@ md.renderer.rules = {
   code_inline: (tokens, idx) => {
     const token = tokens[idx];
     if (!token) return '<p>渲染出错!!!</p>';
-    return `<code class="bg-black text-white rounded-sm px-2 py-1 text-sm transition-all duration-200">${md.utils.escapeHtml(token.content)}</code>`;
+    return `<code class="bg-black text-white rounded-sm px-2 py-1 border border-gray-500 text-sm transition-all duration-200">${md.utils.escapeHtml(token.content)}</code>`;
   },
 
   blockquote_open: () => {
-    return '<blockquote class="border-l-4 border-gray-300 dark:border-gray-600 pl-4 py-2 mb-6 italic transition-all duration-200">';
+    return '<blockquote class="border-l-4 border-gray-300 dark:border-gray-500 pl-4 py-2 mb-6 italic transition-all duration-200">';
   },
 
   table_open: () => '<table class="w-full border-collapse overflow-x-auto my-4">',

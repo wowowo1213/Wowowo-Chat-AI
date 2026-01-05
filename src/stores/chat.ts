@@ -38,15 +38,7 @@ export const useChatStore = defineStore(
     }
 
     function getAllChats(): string[] {
-      return Object.keys(session.value)
-        .filter((name) => {
-          if (time.value?.[name] === undefined) {
-            console.warn(`对话 "${name}" 缺少更新时间，已被过滤`);
-            return false;
-          }
-          return true;
-        })
-        .sort((a, b) => time.value[b]! - time.value[a]!);
+      return Object.keys(session.value).sort((a, b) => time.value[b]! - time.value[a]!);
     }
 
     function getChatTime(name: string): number {

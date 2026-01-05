@@ -156,6 +156,7 @@ import { ref } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { ChatMessage } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
+import * as mammoth from 'mammoth';
 
 const chatStore = useChatStore();
 const message = ref('');
@@ -200,28 +201,31 @@ const triggerFileInput = (type: 'image' | 'document' | 'bigDocument') => {
   fileInput.value.click();
 };
 
+const removeFile = (index: number) => {
+  files.value.splice(index, 1);
+  previewFiles.value = files.value.slice(0, 4);
+};
+
 const getImageFilePreview = (file: File) => {
   return URL.createObjectURL(file);
 };
 
-const readFileAsText = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result);
-      } else {
-        throw new Error('FileReader result is not a string');
-      }
-    };
-    reader.onerror = reject;
-  });
+const isDocx = (type: string): boolean => {
+  return type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 };
 
-const removeFile = (index: number) => {
-  files.value.splice(index, 1);
-  previewFiles.value = files.value.slice(0, 4);
+const extractDocxText = async (file: File): Promise<string> => {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+
+    if (!result.value.trim()) throw new Error('DOCX 文件未检测到可提取的文本内容');
+
+    return result.value;
+  } catch (error) {
+    console.error('Failed to extract DOCX:', error);
+    throw new Error('解析 DOCX 文件失败');
+  }
 };
 
 const handleSubmit = async () => {
@@ -254,7 +258,7 @@ const handleSubmit = async () => {
           })
             .then((res) => res.json())
             .then((data) => {
-              url = data.url;
+              url = data.data.url;
             })
             .catch((error) => console.error('上传失败:', error));
 
@@ -267,14 +271,25 @@ const handleSubmit = async () => {
           };
         }
 
+        if (isDocx(file.type)) {
+          return {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            text: await extractDocxText(file),
+          };
+        }
+
+        alert('不支持的文件类型: ' + file.type);
         return {
           name: file.name,
           size: file.size,
           type: file.type,
-          text: await readFileAsText(file),
+          text: '这是一个前端不支持上传的文件，忽略即可',
         };
       })
     );
+
     files.value = [];
     previewFiles.value = [];
   }

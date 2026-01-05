@@ -60,20 +60,7 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 ### 2. 后端启动 (`wowowo-chat-api`)
 
-安装并运行 ngrok：
-
-```bash
-# 下载 ngrok（官网注册后获取 token）
-# https://ngrok.com/download
-
-# 登录（首次）
-ngrok config add-authtoken YOUR_AUTHTOKEN
-
-# 暴露本地 3000 端口
-ngrok http 3000
-```
-
-运行文件
+这边上传到github的时候可能会遇到ca证书认证未通过的问题，需要配置一下nodejs的ca认证证书
 
 ```bash
 # 克隆仓库
@@ -91,6 +78,10 @@ npm install
 # 修改以下字段：
 # PORT = 5000
 # DASHSCOPE_API_KEY = 你的通义千问API Key
+# GITHUB_TOKEN=github的accessToken
+# GITHUB_REPO_OWNER=用户名
+# GITHUB_REPO_NAME=仓库名
+# GITHUB_BRANCH=main
 
 # 启动服务(二选一)
 npm run start:dev  # 开发模式（热更新）
