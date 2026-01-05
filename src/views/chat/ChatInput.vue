@@ -113,15 +113,16 @@
           </button>
 
           <button
+            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200"
             @mouseenter="isMicrophoneHover = true"
             @mouseleave="isMicrophoneHover = false"
-            class="relative rounded-full w-6 h-6 cursor-pointer flex items-center justify-center hover:scale-110 transition-all duration-200"
+            @click="toggleRecording"
           >
             <span
-              v-show="isMicrophoneHover"
+              v-show="isRecording || isMicrophoneHover"
               class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-400 text-black px-2 py-1 rounded-md text-[10px] whitespace-nowrap shadow-md z-50"
             >
-              录音转文字
+              {{ isRecording ? '正在听...' : '录音转文字' }}
             </span>
 
             <el-icon :size="28">
@@ -152,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onBeforeUnmount } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { ChatMessage } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
@@ -168,6 +169,69 @@ const isHovered = ref(false);
 const isDocumentHover = ref(false);
 const uploadDocumentActive = ref(false);
 const isMicrophoneHover = ref(false);
+const recognition = ref(null);
+const isRecording = ref(false);
+
+const isSpeechSupported = computed(
+  () =>
+    typeof window !== 'undefined' &&
+    ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)
+);
+
+const ensureRecognition = () => {
+  if (!isSpeechSupported.value || recognition.value) return;
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const instance = new SpeechRecognition();
+  instance.lang = 'zh-CN';
+  instance.interimResults = true;
+  instance.continuous = true;
+
+  instance.onresult = (event) => {
+    const lastResult = event.results[event.results.length - 1];
+    if (lastResult.isFinal) {
+      const finalText = lastResult[0].transcript;
+      message.value = `${message.value} ${finalText}`.trim();
+    }
+  };
+
+  instance.onerror = () => stopRecording();
+  instance.onend = () => stopRecording();
+
+  recognition.value = instance;
+};
+
+const startRecording = () => {
+  if (!isSpeechSupported.value || isRecording.value) return;
+  ensureRecognition();
+  if (!recognition.value) return;
+  try {
+    recognition.value.start();
+    isRecording.value = true;
+  } catch (error) {
+    console.error(error);
+    isRecording.value = false;
+  }
+};
+
+const stopRecording = () => {
+  if (recognition.value && typeof recognition.value.stop === 'function') {
+    recognition.value.stop();
+  }
+  isRecording.value = false;
+};
+
+const toggleRecording = () => {
+  if (isRecording.value) {
+    stopRecording();
+  } else {
+    startRecording();
+  }
+};
+
+onBeforeUnmount(() => {
+  stopRecording();
+});
 
 const handleKeydown = (event: Event | KeyboardEvent) => {
   if (!(event instanceof KeyboardEvent)) return;

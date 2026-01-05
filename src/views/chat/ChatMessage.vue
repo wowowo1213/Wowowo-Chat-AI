@@ -1,7 +1,15 @@
 <template>
-  <div class="flex-1 overflow-y-auto">
+  <div class="flex-1 pb-2 overflow-hidden relative">
+    <div
+      class="absolute bottom-1 left-1/2 transform -translate-x-1/2 z-100 flex items-center justify-center cursor-pointer bg-blue-100 dark:bg-gray-800 rounded-full transition-colors duration-200"
+    >
+      <el-icon class="px-1" @click="scrollToBottom" :size="34">
+        <ArrowDownBold class="text-gray-700 dark:text-gray-500 transition-colors duration-200" />
+      </el-icon>
+    </div>
+
     <DynamicScroller
-      class="h-full w-full"
+      class="Dynamic_content h-full w-full"
       :items="messages"
       :min-item-size="100"
       key-field="_key"
@@ -31,7 +39,7 @@
                 >
                   <img
                     v-if="file.type.startsWith('image/')"
-                    :src="file.previewUrl"
+                    :src="file?.previewUrl"
                     alt="预览"
                     class="w-20 h-20 object-cover"
                   />
@@ -54,7 +62,7 @@
 
             <div
               v-else
-              class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-3 px-4 transition-all duration-200 max-w-[80%]"
+              class="bg-blue-50 dark:text-white dark:bg-gray-700 rounded-lg py-3 px-4 transition-all duration-200 w-full"
             >
               <p class="text-sm text-gray-500 dark:text-gray-400 pb-2">
                 回答来自 通义千问-plus 大模型
@@ -69,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import { useChatStore, type ContentItem } from '@/stores/chat';
 import AiMessageContent from './AiMessageContent.vue';
 
@@ -89,5 +97,42 @@ const formatFileSize = (size: number) => {
     i++;
   }
   return `${size.toFixed(1)}${units[i]}`;
+};
+
+const isScrolling = ref(false);
+
+const forceScrollToBottom = async () => {
+  await nextTick();
+  await new Promise((resolve) => setTimeout(resolve, 200));
+  const container = document.querySelector('.Dynamic_content');
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+    setTimeout(() => {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      });
+    }, 100);
+  }
+};
+
+watch(
+  () => chatStore.curname,
+  async () => {
+    isScrolling.value = true;
+    await forceScrollToBottom();
+    isScrolling.value = false;
+  },
+  { immediate: true }
+);
+
+const scrollToBottom = async () => {
+  if (isScrolling.value) return;
+  await nextTick();
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  const container = document.querySelector('.Dynamic_content');
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
 };
 </script>
