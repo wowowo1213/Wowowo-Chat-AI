@@ -157,6 +157,7 @@ import { ref, computed, onBeforeUnmount } from 'vue';
 import { useChatStore } from '@/stores/chat';
 import type { ChatMessage } from '@/stores/chat';
 import { chatService } from '@/services/chatService';
+// import { ElMessage } from 'element-plus'; 这边直接导入的话，css样式失效???什么原因，直接使用vite配置的自动按需导入又无法通过ts-plugin的检验
 import * as mammoth from 'mammoth';
 
 const chatStore = useChatStore();
@@ -294,7 +295,10 @@ const extractDocxText = async (file: File): Promise<string> => {
 
 const handleSubmit = async () => {
   const trimmedMessage = message.value.trim();
-  if (!trimmedMessage && files.value.length === 0) return alert('问题或文件不能为空');
+  if (!trimmedMessage && files.value.length === 0) {
+    ElMessage.error('问题或文件不能为空');
+    return;
+  }
 
   isLoading.value = true;
 
@@ -349,7 +353,7 @@ const handleSubmit = async () => {
         })
       );
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) ElMessage.error(error.message);
       files.value = [];
       previewFiles.value = [];
       isLoading.value = false;

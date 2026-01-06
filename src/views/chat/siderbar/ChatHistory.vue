@@ -79,11 +79,11 @@
       <el-input
         v-model="newTitle"
         placeholder="输入新名称"
-        @keyup.enter="handleUpdateTitle(currentItem)"
+        @keyup.enter="handleUpdateTitle(currentName)"
       />
       <template #footer>
         <el-button @click="showEditDialog = false">取消</el-button>
-        <el-button type="primary" @click="handleUpdateTitle(currentItem)">确认</el-button>
+        <el-button type="primary" @click="handleUpdateTitle(currentName)">确认</el-button>
       </template>
     </el-dialog>
   </div>
@@ -96,7 +96,7 @@ import { useChatStore } from '@/stores/chat';
 const chatStore = useChatStore();
 const showEditDialog = ref(false);
 const newTitle = ref('');
-const currentItem = ref('');
+const currentName = ref('');
 
 const formatTime = (timestamp: number) => {
   if (!timestamp) return '未开始';
@@ -118,14 +118,14 @@ const formatTime = (timestamp: number) => {
   });
 };
 
-const openEditDialog = (item: string) => {
-  currentItem.value = item;
-  newTitle.value = item;
+const openEditDialog = (name: string) => {
+  currentName.value = name;
+  newTitle.value = name;
   showEditDialog.value = true;
 };
 
-const handleUpdateTitle = (currentItem: string) => {
-  chatStore.updateChatName(currentItem, newTitle.value.trim());
+const handleUpdateTitle = (name: string) => {
+  chatStore.updateChatName(name, newTitle.value.trim());
   showEditDialog.value = false;
   newTitle.value = '';
 };
