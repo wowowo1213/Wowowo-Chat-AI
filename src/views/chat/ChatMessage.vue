@@ -25,7 +25,7 @@
               v-if="item.role === 'user'"
               class="overflow-hidden dark:text-white bg-gray-100 dark:bg-gray-800 rounded-lg py-4 px-6 transition-all duration-200 max-w-[80%]"
             >
-              <p class="max-w-full dark:text-gray-300 transition-colors duration-200">
+              <p class="max-w-full dark:text-white transition-colors duration-200">
                 {{ getMessageText(item.content) }}
               </p>
               <div

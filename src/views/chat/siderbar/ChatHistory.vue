@@ -98,7 +98,7 @@ const showEditDialog = ref(false);
 const newTitle = ref('');
 const currentName = ref('');
 
-const formatTime = (timestamp: number) => {
+const formatTime = (timestamp: number | undefined) => {
   if (!timestamp) return '未开始';
 
   const minute = 60 * 1000;

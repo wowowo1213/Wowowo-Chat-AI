@@ -42,8 +42,8 @@ export const useChatStore = defineStore(
       return Object.keys(session.value).sort((a, b) => time.value[b]! - time.value[a]!);
     }
 
-    function getChatTime(name: string): number {
-      return time.value[name] || 0;
+    function getChatTime(name: string): number | undefined {
+      return time.value[name];
     }
 
     function getNewDefaultChatName() {

@@ -90,7 +90,7 @@ md.renderer.rules = {
   },
 
   bullet_list_open: () =>
-    '<ul class="mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
+    '<ul class="my-3 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
   ordered_list_open: () =>
     '<ol class="mb-6 text-gray-700 dark:text-gray-300 space-y-3 transition-all duration-200">',
   list_item_open: () => '<li class="ml-4">',
