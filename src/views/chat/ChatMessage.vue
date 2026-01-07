@@ -105,15 +105,11 @@ const forceScrollToBottom = async () => {
   await nextTick();
   await new Promise((resolve) => setTimeout(resolve, 200));
   const container = document.querySelector('.Dynamic_content');
-  if (container) {
-    container.scrollTop = container.scrollHeight;
-    setTimeout(() => {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: 'smooth',
-      });
-    }, 100);
-  }
+  if (!container) return;
+  container.scrollTo({
+    top: container.scrollHeight,
+    behavior: 'smooth',
+  });
 };
 
 watch(
@@ -131,8 +127,7 @@ const scrollToBottom = async () => {
   await nextTick();
   await new Promise((resolve) => setTimeout(resolve, 100));
   const container = document.querySelector('.Dynamic_content');
-  if (container) {
-    container.scrollTop = container.scrollHeight;
-  }
+  if (!container) return;
+  container.scrollTop = container.scrollHeight;
 };
 </script>

@@ -65,7 +65,7 @@ md.use(markdownItTable);
 md.options.highlight = (str, lang) => {
   if (lang && hljs.getLanguage(lang)) {
     const highlighted = hljs.highlight(str, { language: lang }).value;
-    return `<pre class="bg-black rounded-lg p-4 my-6 overflow-x-auto"><div class="flex justify-between mb-2 ai_message_content_tip"><span class="text-gray-100">${lang}</span></div><code class="text-white">${highlighted}</code></pre>`;
+    return `<pre class="bg-black rounded-lg p-4 my-6 overflow-x-auto"><div class="flex justify-between items-center mb-2 pb-2 border-b-2 border-gray-500 ai_message_content_tip"><span class="text-gray-100">${lang}</span></div><code class="text-white">${highlighted}</code></pre>`;
   }
   return `<pre class="bg-black my-6 p-4 overflow-x-auto"><code class="text-white">${md.utils.escapeHtml(str)}</code></pre>`;
 };
@@ -111,9 +111,8 @@ md.renderer.rules = {
     return `<code class="bg-black text-white rounded-sm px-2 py-1 border border-gray-500 text-sm transition-all duration-200">${md.utils.escapeHtml(token.content)}</code>`;
   },
 
-  blockquote_open: () => {
-    return '<blockquote class="border-l-4 border-gray-300 dark:border-gray-500 pl-4 py-2 mb-6 italic transition-all duration-200">';
-  },
+  blockquote_open: () =>
+    '<blockquote class="border-l-4 border-gray-300 dark:border-gray-500 pl-4 py-2 mb-6 italic transition-all duration-200">',
 
   table_open: () => '<table class="w-full border-collapse overflow-x-auto my-4">',
   table_close: () => '</table>',
