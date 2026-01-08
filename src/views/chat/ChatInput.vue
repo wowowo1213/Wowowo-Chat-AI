@@ -321,7 +321,7 @@ const handleSubmit = async () => {
             const formData = new FormData();
             formData.append('file', file);
 
-            await fetch('http://localhost:3000/upload/file', {
+            await fetch(`${import.meta.env.VITE_API_URL}/upload/file`, {
               method: 'POST',
               body: formData,
             })
@@ -329,7 +329,10 @@ const handleSubmit = async () => {
               .then((data) => {
                 url = data.data.url;
               })
-              .catch((error) => console.error('上传失败:', error));
+              .catch((error) => {
+                console.error('上传失败:', error);
+                chatStore.addDelta('网络出错啦，暂时无法使用🌹');
+              });
 
             return {
               name: file.name,
