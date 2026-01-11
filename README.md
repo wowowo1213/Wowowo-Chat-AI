@@ -49,6 +49,7 @@ Wowowo-Chat-AI 是一个采用 **TypeScript** 开发的前后端分离AI聊天�
 
 ### 2. 后端启动 (`wowowo-chat-api`)
 
+这边要自己手动创建一个github的公开仓库(因为要上传图片，然后把url地址交给通义千问)，需要生成一个github的密钥accessToken
 这边上传到github的时候可能会遇到ca证书认证未通过的问题，需要配置一下nodejs的ca认证证书
 
 ```bash
