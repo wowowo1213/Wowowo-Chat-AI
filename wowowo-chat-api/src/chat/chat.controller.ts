@@ -18,6 +18,7 @@ interface Attachment {
   imgurl?: string;
   previewURL?: string;
 }
+
 interface Message {
   role: 'user' | 'assistant' | 'system';
   content: ContentItem[];

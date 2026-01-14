@@ -11,7 +11,7 @@ class ChatService {
 
     try {
       const messages = chatMessages.slice(-10);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/chat/stream-sse`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/chat/stream-sse`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,10 +20,10 @@ class ChatService {
         signal: this.controller.signal,
       });
 
-      if (!response.ok) throw new Error('请求失败');
-      if (!response.body) throw new Error('无响应流');
+      if (!res.ok) throw new Error('请求失败');
+      if (!res.body) throw new Error('无响应流');
 
-      const reader = response.body.getReader();
+      const reader = res.body.getReader();
       const decoder = new TextDecoder();
 
       while (true) {
@@ -34,16 +34,15 @@ class ChatService {
         const lines = chunk.split('\n\n');
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = JSON.parse(line.slice(6));
-            if (data.type === 'chunk') {
-              this.chatStore.addDelta(data.content);
-            } else if (data.type === 'end') {
-              this.disconnect();
-            } else if (data.type === 'error') {
-              console.error('Stream error:', data.message);
-              this.disconnect();
-            }
+          if (!line.startsWith('data: ')) continue;
+          const data = JSON.parse(line.slice(6));
+          if (data.type === 'chunk') {
+            this.chatStore.addDelta(data.content);
+          } else if (data.type === 'end') {
+            this.disconnect();
+          } else if (data.type === 'error') {
+            console.error('Stream error:', data.message);
+            this.disconnect();
           }
         }
       }
